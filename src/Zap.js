@@ -1,18 +1,46 @@
 import React from 'react';
 import './Zap.css';
+import * as THREE from 'three';
 
 class Zap extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      hierarchy: [],
+      isPlaying: false,
+      inspected: null,
+    };
+    this.previewCanvasRef = React.createRef();
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div className="Zap">
+        <div className="Zap-CommandBar">
+
+        </div>
+
+        <div className="Zap-PreviewWindow">
+          <canvas ref={this.previewCanvasRef}></canvas>
+        </div>
+
+        <div className="Zap-PlayWindow">
+        </div>
+
+        <div className="Zap-InspectorWindow">
+          <h2>Inspector</h2>
+        </div>
+
+        <div className="Zap-HierarchyWindow">
+          <h2>Hierarchy</h2>
+        </div>
       </div>
     );
+  }
+
+  componentDidMount() {
+    
   }
 }
 
