@@ -97,7 +97,11 @@ class Zap extends React.Component {
             width: this.state.canvasHierarchyDividerLeft + 'vw',
           }}
         >
-          <canvas ref={this.previewCanvasRef}></canvas>
+          <canvas
+            ref={this.previewCanvasRef}
+            width={this.getPreviewCanvasDimensions().width}
+            height={this.getPreviewCanvasDimensions().height}
+          />
         </div>
 
         <div
@@ -118,7 +122,11 @@ class Zap extends React.Component {
             height: 100 - (this.state.previewPlayDividerTop + DIVIDER_HEIGHT) + 'vh',
           }}
         >
-          <canvas ref={this.playCanvasRef}></canvas>
+          <canvas
+            ref={this.playCanvasRef}
+            width={this.getPlayCanvasDimensions().width}
+            height={this.getPlayCanvasDimensions().height}
+          />
         </div>
 
         <div
@@ -385,33 +393,50 @@ class Zap extends React.Component {
   //   };
   // }
 
+  getPreviewCanvasDimensions() {
+    const width = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
+    const height = ((this.state.previewPlayDividerTop - COMMAND_BAR_HEIGHT) / 100) * window.innerHeight;
+    const aspectRatio = width / height;
+    return {
+      width,
+      height,
+      aspectRatio,
+    };
+  }
+
+  getPlayCanvasDimensions() {
+    const width = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
+    const height = ((100 - (this.state.previewPlayDividerTop + DIVIDER_HEIGHT)) / 100) * window.innerHeight;
+    const aspectRatio = width / height;
+    return {
+      width,
+      height,
+      aspectRatio,
+    };
+  }
+
   resizeCanvases() {
     const { previewThreeRenderer, playThreeRenderer } = this.state;
-    //const { width, height, aspectRatio } = this.getCanvasDimensions();
-    const previewCanvas = this.previewCanvasRef.current;
-    const previewCanvasWidth = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
-    const previewCanvasHeight = ((this.state.previewPlayDividerTop - COMMAND_BAR_HEIGHT) / 100) * window.innerHeight;
-    const previewCanvasAspectRatio = previewCanvasWidth / previewCanvasHeight;
-    // TODO refactor declaratively
-    previewCanvas.width = previewCanvasWidth;
-    previewCanvas.height = previewCanvasHeight;
+
+    const {
+      width: previewCanvasWidth,
+      height: previewCanvasHeight,
+      aspectRatio: previewCanvasAspectRatio,
+    } = this.getPreviewCanvasDimensions();
     previewThreeRenderer.setSize(previewCanvasWidth, previewCanvasHeight);
-
-    const playCanvas = this.playCanvasRef.current;
-    const playCanvasWidth = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
-    const playCanvasHeight = ((100 - (this.state.previewPlayDividerTop + DIVIDER_HEIGHT)) / 100) * window.innerHeight;
-    const playCanvasAspectRatio = playCanvasWidth / playCanvasHeight;
-    playCanvas.width = playCanvasWidth;
-    playCanvas.height = playCanvasHeight;
-    playThreeRenderer.setSize(playCanvasWidth, playCanvasHeight);
-
-    // TODO correct scene shenannigans
     const debugCameraComps = this.state.currentScene.entities.map(ent => ent.getComponent(components.IsMainDebugCamera) && ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
     debugCameraComps.forEach((cameraComp) => {
       cameraComp.value.aspectRatio = previewCanvasAspectRatio;
     });
-    const cameraComps = this.state.currentScene.entities.map(ent => ent.getComponent(components.IsMainPlayerCamera) && ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
-    cameraComps.forEach((cameraComp) => {
+
+    const {
+      width: playCanvasWidth,
+      height: playCanvasHeight,
+      aspectRatio: playCanvasAspectRatio,
+    } = this.getPlayCanvasDimensions();
+    playThreeRenderer.setSize(playCanvasWidth, playCanvasHeight);
+    const playCameraComps = this.state.currentScene.entities.map(ent => ent.getComponent(components.IsMainPlayerCamera) && ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
+    playCameraComps.forEach((cameraComp) => {
       cameraComp.value.aspectRatio = playCanvasAspectRatio;
     });
 
