@@ -196,6 +196,10 @@ class Zap extends React.Component {
     }, () => {
       this.setUpRenderSystem();
     });
+
+    window.addEventListener('resize', () => {
+      this.resizeCanvases();
+    });
   }
 
   setUpEcs() {
