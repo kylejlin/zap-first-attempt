@@ -153,7 +153,12 @@ class Zap extends React.Component {
                 const nameComp = entity.getComponent(components.Name);
                 const name = nameComp ? nameComp.name : 'Unnamed Entity';
                 return (
-                  <li onClick={() => this.setState({ inspected: entity })}>{name}</li>
+                  <li
+                    onClick={() => this.setState({ inspected: entity })}
+                    className={entity === this.state.inspected ? 'Zap-HierarchySelectedEntity' : ''}
+                  >
+                    {name}
+                  </li>
                 );
               })}
             </ul>

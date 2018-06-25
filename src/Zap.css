@@ -105,6 +105,11 @@
   padding: 1.5vw;
 }
 
+.Zap-HierarchySelectedEntity {
+  background-color: #0088BB;
+  color: #111111;
+}
+
 .Zap-HierarchyEntities li, .Zap-HierarchySystems li {
   list-style: none;
 }

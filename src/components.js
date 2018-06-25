@@ -18,16 +18,18 @@ export class Position {
   }
 }
 
-export class Velocity {
-  constructor(x, y, z) {
+export class Rotation {
+  constructor(x, y, z, order) {
     // @type Float
     this.x = x;
     this.y = y;
     this.z = z;
+    // @type String
+    this.order = order;
   }
 }
 
-export class Rotation {
+export class Velocity {
   constructor(x, y, z) {
     // @type Float
     this.x = x;
