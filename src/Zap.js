@@ -42,19 +42,26 @@ class Zap extends React.Component {
 
   render() {
     return (
-      <div className="Zap" onMouseMove={(e) => {
+      <div
+        className="Zap"
+        onMouseMove={(e) => {
         const leftVw = 100 * e.clientX / window.innerWidth;
         if (this.state.isCanvasHierarchyDividerBeingDragged) {
+          e.preventDefault();
           this.setState({
-            canvasHierarchyDividerLeft: leftVw,
+            canvasHierarchyDividerLeft: Math.min(leftVw, this.state.hierarchyInspectorDividerLeft),
+          }, () => {
+            this.resizeCanvases();
           });
         }
         if (this.state.isHierarchyInspectorDividerBeingDragged) {
+          e.preventDefault();
           this.setState({
-            hierarchyInspectorDividerLeft: leftVw,
+            hierarchyInspectorDividerLeft: Math.max(leftVw, this.state.canvasHierarchyDividerLeft),
           });
         }
-      }}>
+      }}
+    >
         <div
           className="Zap-CommandBar"
           style={{
@@ -211,9 +218,9 @@ class Zap extends React.Component {
       ({ dt }, scene, [cameraIndex, thingIndex]) => {
         threeScene.children = [];
         const [camera] = cameraIndex.entities;
-        const { fov, aspect, near, far } = camera.getComponent(components.CameraEnum).value;
+        const { fov, aspectRatio, near, far } = camera.getComponent(components.CameraEnum).value;
         //console.log('cam',fov);
-        const threeCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        const threeCamera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
         threeCamera.position.set(0, 0, 5);
 
         for (const thingEnt of thingIndex.entities) {
@@ -267,7 +274,7 @@ class Zap extends React.Component {
     const cameraEnt = new Entity();
     const cameraCameraComp = new components.CameraEnum(
       components.CameraEnum.Which.Perspective,
-      { fov: 75, aspect: this.getCanvasDimensions().aspectRation, near: 0.1, far: 1000.0 }
+      { fov: 75, aspectRatio: this.getCanvasDimensions().aspectRatio, near: 0.1, far: 1000.0 }
     );
     const cameraNameComp = new components.Name('Perspective Camera');
     cameraEnt.addComponent(cameraCameraComp);
@@ -294,13 +301,33 @@ class Zap extends React.Component {
   }
 
   getCanvasDimensions() {
-    const width = 0.50 * window.innerWidth;
-    const height = 0.45 * window.innerHeight;
+    const [width, height] = this.state
+      ? [
+        (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth,
+        0.45 * window.innerHeight,
+      ]
+      : [
+        0.50 * window.innerWidth,
+        0.45 * window.innerHeight
+      ];
     return {
       width,
       height,
       aspectRatio: width / height,
     };
+  }
+
+  resizeCanvases() {
+    const { threeRenderer } = this.state;
+    const { width, height, aspectRatio } = this.getCanvasDimensions();
+    const canvas = this.previewCanvasRef.current;
+    canvas.width = width;
+    canvas.height = height;
+    threeRenderer.setSize(width, height);
+    const cameraComps = this.state.initScene.entities.map(ent => ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
+    cameraComps.forEach((cameraComp) => {
+      cameraComp.value.aspectRatio = aspectRatio;
+    });
   }
 }
 
