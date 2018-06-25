@@ -8,6 +8,8 @@ import Scene from './ecs/Scene';
 import System from './ecs/System';
 import IndexSpec from './ecs/IndexSpec';
 
+import getInitScene from './getInitScene';
+
 window.t = THREE;
 window.c = components;
 window.ecs = {
@@ -30,7 +32,7 @@ class Zap extends React.Component {
 
     this.state = {
       initScene: null,
-      currentScene: this.getInitScene(),
+      currentScene: getInitScene(),
       isPlaying: false,
       inspected: null,
 
@@ -253,7 +255,7 @@ class Zap extends React.Component {
 
   setUpRenderSystem() {
     const { previewThreeScene, previewThreeRenderer, playThreeScene, playThreeRenderer } = this.state;
-// TODO
+// TODO: complete render system
     const render = new System(
       'Render',
       ({ dt }, scene, [playerCameraIndex, debugCameraIndex, thingIndex]) => {
@@ -342,67 +344,6 @@ class Zap extends React.Component {
       render,
     });
   }
-
-  getInitScene() {
-    const scene = new Scene();
-
-    const cameraEnt = new Entity();
-    const cameraCameraComp = new components.CameraEnum(
-      components.CameraEnum.Which.Perspective,
-      { fov: 75, aspectRatio: 1, near: 0.1, far: 1000.0 }
-    );
-    const cameraNameComp = new components.Name('Player Camera');
-    cameraEnt.addComponent(cameraCameraComp);
-    cameraEnt.addComponent(cameraNameComp);
-    cameraEnt.addComponent(new components.IsMainPlayerCamera());
-    scene.addEntity(cameraEnt);
-
-    const debugCameraEnt = new Entity();
-    const debugCameraNameComp = new components.Name('Debug Camera');
-    const debugCameraCameraComp = new components.CameraEnum(
-      components.CameraEnum.Which.Perspective,
-      { fov: 75, aspectRatio: 1, near: 0.1, far: 1000.0 }
-    );
-    debugCameraEnt.addComponent(debugCameraNameComp);
-    debugCameraEnt.addComponent(debugCameraCameraComp);
-    debugCameraEnt.addComponent(new components.IsMainDebugCamera());
-    scene.addEntity(debugCameraEnt);
-
-    const cubeEnt = new Entity();
-    const threeGeo = new THREE.BoxGeometry(3, 3, 3);
-    const cubeGeoComp = new components.Geometry(
-      threeGeo.vertices,
-      threeGeo.faces
-    );
-    const cubeMatComp = new components.MaterialEnum(
-      components.MaterialEnum.Which.StandardColor,
-      { color: 0xffa500 }
-    );
-    const cubeNameComp = new components.Name('Orange Cube');
-    cubeEnt.addComponent(cubeGeoComp);
-    cubeEnt.addComponent(cubeMatComp);
-    cubeEnt.addComponent(cubeNameComp);
-    scene.addEntity(cubeEnt);
-
-    return scene;
-  }
-
-  // getCanvasDimensions() {
-  //   const [width, height] = this.state
-  //     ? [
-  //       (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth,
-  //       0.45 * window.innerHeight,
-  //     ]
-  //     : [
-  //       0.50 * window.innerWidth,
-  //       0.45 * window.innerHeight
-  //     ];
-  //   return {
-  //     width,
-  //     height,
-  //     aspectRatio: width / height,
-  //   };
-  // }
 
   getPreviewCanvasDimensions() {
     const width = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
