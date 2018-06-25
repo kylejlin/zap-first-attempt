@@ -319,7 +319,9 @@ class Zap extends React.Component {
     };
     render();
 
-    window.addEventListener('resize', render);
+    this.setState({
+      render,
+    });
   }
 
   getInitScene() {
@@ -404,10 +406,18 @@ class Zap extends React.Component {
     playThreeRenderer.setSize(playCanvasWidth, playCanvasHeight);
 
     // TODO correct scene shenannigans
-    const cameraComps = this.state.currentScene.entities.map(ent => ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
+    const debugCameraComps = this.state.currentScene.entities.map(ent => ent.getComponent(components.IsMainDebugCamera) && ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
+    debugCameraComps.forEach((cameraComp) => {
+      cameraComp.value.aspectRatio = previewCanvasAspectRatio;
+    });
+    const cameraComps = this.state.currentScene.entities.map(ent => ent.getComponent(components.IsMainPlayerCamera) && ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
     cameraComps.forEach((cameraComp) => {
       cameraComp.value.aspectRatio = playCanvasAspectRatio;
     });
+
+    if (this.state.render) {
+      this.state.render();
+    }
   }
 }
 
