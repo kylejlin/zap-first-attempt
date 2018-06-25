@@ -35,7 +35,12 @@ class Zap extends React.Component {
     return (
       <div className="Zap">
         <div className="Zap-CommandBar">
-
+          <button className="Zap-CommandButton">
+            <div className="Zap-IconPlay" />
+          </button>
+          <button className="Zap-CommandButton">
+            <div className="Zap-IconPause" />
+          </button>
         </div>
 
         <div className="Zap-PreviewWindow">

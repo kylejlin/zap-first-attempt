@@ -4,6 +4,7 @@
   --grey: #444444;
   --text-color: #EEEEEE;
   --should-not-be-seen: #FF0000;
+  --button-icon-color: #0088BB;
 }
 
 .Zap h2 {
@@ -20,6 +21,33 @@
   left: 0vw;
   width: 50vw;
   height: 10vh;
+}
+
+.Zap-CommandButton {
+  background-color: var(--grey);
+  width: 8vh;
+  height: 8vh;
+  border: none;
+  margin: 1vh;
+  outline: none;
+}
+
+.Zap-IconPlay {
+  width: 0;
+  height: 0;
+  border-top: 2.30940107676vh solid transparent;
+  border-bottom: 2.30940107676vh solid transparent;
+  border-left: 4vh solid var(--button-icon-color);
+  transform: translate(25%);
+}
+
+.Zap-IconPause {
+  background-color: transparent;
+  width: 1vh;
+  height: 6vh;
+  border-left: 1.5vh solid var(--button-icon-color);
+  border-right: 1.5vh solid var(--button-icon-color);
+  transform: translate(25%);
 }
 
 .Zap-PreviewWindow {
