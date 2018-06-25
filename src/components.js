@@ -46,7 +46,7 @@ export class Geometry {
 export class MaterialEnum {
   static Which = {
     // { color: Int }
-    StandardColor: 0,
+    StandardColor: 'StandardColor',
   }
 
   constructor(which, value) {
@@ -58,7 +58,7 @@ export class MaterialEnum {
 export class CameraEnum {
   static Which = {
     // { fov: Float, aspect: Float, near: Float, far: Float }
-    Perspective: 0,
+    Perspective: 'Perspective',
   }
 
   constructor(which, value) {

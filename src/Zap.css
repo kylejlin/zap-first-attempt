@@ -15,12 +15,32 @@
 }
 
 .Zap-CommandBar {
-  background-color: var(--soft-black);
+  background-color: var(--dark-grey);
   position: fixed;
   top: 0;
   left: 0vw;
   width: 50vw;
   height: 10vh;
+}
+
+.Zap-CanvasHierarchy-Divider {
+  background-color: var(--grey);
+  height: 100vh;
+  width: 1vw;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  /*left: 50vw;*/
+}
+
+.Zap-HierarchyInspector-Divider {
+  background-color: var(--grey);
+  height: 100vh;
+  width: 1vw;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  /*left: 75vw;*/
 }
 
 .Zap-CommandButton {
@@ -69,11 +89,10 @@
 }
 
 .Zap-HierarchyWindow {
-  background-color: var(--grey);
+  background-color: var(--dark-grey);
   color: var(--text-color);
   position: fixed;
   top: 0;
-  left: 50vw;
   width: 22vw;
   height: calc(100vh - 3vw);
   padding: 1.5vw;
