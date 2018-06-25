@@ -309,7 +309,8 @@ class Zap extends React.Component {
       this.state.currentScene.update({ dt });
     };
     render();
-    this.forceUpdate();
+
+    window.addEventListener('resize', render);
   }
 
   getInitScene() {
