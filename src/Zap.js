@@ -238,12 +238,32 @@ class Zap extends React.Component {
     const render = new System(
       'Render',
       ({ dt }, scene, [cameraIndex, thingIndex]) => {
-        previewThreeScene.children = [];
+        // previewThreeScene.children = [];
+        //const [camera] = cameraIndex.entities;
+        //const { fov, aspectRatio, near, far } = camera.getComponent(components.CameraEnum).value;
+        // const threeCamera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
+        // threeCamera.position.set(0, 0, 5);
+        //
+        // for (const thingEnt of thingIndex.entities) {
+        //   const geoComp = thingEnt.getComponent(components.Geometry);
+        //   const matComp = thingEnt.getComponent(components.MaterialEnum);
+        //   const threeGeo = new THREE.Geometry();
+        //   threeGeo.vertices = geoComp.vertices;
+        //   threeGeo.faces = geoComp.faces;
+        //   // TODO get actual material (+ standard)
+        //   const threeMat = new THREE.MeshBasicMaterial({ color: matComp.value.color });
+        //   const threeMesh = new THREE.Mesh(threeGeo, threeMat);
+        //   previewThreeScene.add(threeMesh);
+        // }
+        //
+        // previewThreeRenderer.render(previewThreeScene, threeCamera);
+
+        playThreeScene.children = [];
         const [camera] = cameraIndex.entities;
         const { fov, aspectRatio, near, far } = camera.getComponent(components.CameraEnum).value;
         //console.log('cam',fov);
-        const threeCamera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
-        threeCamera.position.set(0, 0, 5);
+        const playThreeCamera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
+        playThreeCamera.position.set(0, 0, 5);
 
         for (const thingEnt of thingIndex.entities) {
           const geoComp = thingEnt.getComponent(components.Geometry);
@@ -254,10 +274,10 @@ class Zap extends React.Component {
           // TODO get actual material (+ standard)
           const threeMat = new THREE.MeshBasicMaterial({ color: matComp.value.color });
           const threeMesh = new THREE.Mesh(threeGeo, threeMat);
-          previewThreeScene.add(threeMesh);
+          playThreeScene.add(threeMesh);
         }
 
-        previewThreeRenderer.render(previewThreeScene, threeCamera);
+        playThreeRenderer.render(playThreeScene, playThreeCamera);
       },
       [
         new IndexSpec([
@@ -280,7 +300,9 @@ class Zap extends React.Component {
   startLoop() {
     let then = performance.now();
     const render = () => {
-      requestAnimationFrame(render);
+      if (this.state.isPlaying) {
+        requestAnimationFrame(render);
+      }
       const now = performance.now();
       const dt = now - then;
       then = now;
@@ -353,7 +375,8 @@ class Zap extends React.Component {
 
     const playCanvas = this.playCanvasRef.current;
     const playCanvasWidth = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
-    const playCanvasHeight = (100 - (this.state.previewPlayDividerTop + DIVIDER_HEIGHT) / 100) * window.innerHeight;
+    const playCanvasHeight = ((100 - (this.state.previewPlayDividerTop + DIVIDER_HEIGHT)) / 100) * window.innerHeight;
+    const playCanvasAspectRatio = playCanvasWidth / playCanvasHeight;
     playCanvas.width = playCanvasWidth;
     playCanvas.height = playCanvasHeight;
     playThreeRenderer.setSize(playCanvasWidth, playCanvasHeight);
@@ -361,7 +384,7 @@ class Zap extends React.Component {
     // TODO correct scene shenannigans
     const cameraComps = this.state.currentScene.entities.map(ent => ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
     cameraComps.forEach((cameraComp) => {
-      cameraComp.value.aspectRatio = previewCanvasAspectRatio;
+      cameraComp.value.aspectRatio = playCanvasAspectRatio;
     });
   }
 }
