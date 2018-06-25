@@ -320,11 +320,7 @@ class Zap extends React.Component {
       ]
     );
     this.state.currentScene.addSystem(render);
-    this.setState({
-      render,
-    }, () => {
-      this.startLoop();
-    });
+    this.startLoop();
   }
 
   startLoop() {
