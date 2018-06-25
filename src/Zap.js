@@ -48,10 +48,51 @@ class Zap extends React.Component {
 
         <div className="Zap-InspectorWindow">
           <h2>Inspector</h2>
+          {this.state.inspected instanceof Entity
+            ? Object.keys(this.state.inspected).filter((componentName) => {
+              const component = this.state.inspected[componentName];
+              return 'scene' !== componentName && component !== null;
+            }).map((componentName) => {
+              return (
+                <div className="Zap-InspectorComponent">
+                  <h3>{componentName}</h3>
+                  {Object.keys(this.state.inspected[componentName]).map((propertyName) => {
+                    const stringifiedValue = JSON.stringify(this.state.inspected[componentName][propertyName], null, 4);
+                    const renderedValue = stringifiedValue.length <= 32
+                      ? stringifiedValue
+                      : stringifiedValue.slice(0, 32) + '...';
+                    return (
+                      <div className="Zap-InspectorComponentProperty">
+                        <div>{propertyName}:</div>
+                        <textarea value={stringifiedValue} />
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })
+            : null
+          }
         </div>
 
         <div className="Zap-HierarchyWindow">
           <h2>Hierarchy</h2>
+          <ul className="Zap-HierarchyEntities">
+            {(this.state.isPlaying ? this.state.currentScene : this.state.initScene).entities.map((entity) => {
+              const nameComp = entity.getComponent(components.Name);
+              const name = nameComp ? nameComp.name : 'Unnamed Entity';
+              return (
+                <li onClick={() => this.setState({ inspected: entity })}>{name}</li>
+              );
+            })}
+          </ul>
+          <ul className="Zap-HierarchySystems">
+            {(this.state.isPlaying ? this.state.currentScene : this.state.initScene).systems.map((system) => {
+              return (
+                <li>{system.name}</li>
+              );
+            })}
+          </ul>
         </div>
       </div>
     );
@@ -89,6 +130,7 @@ class Zap extends React.Component {
     const { threeScene, threeRenderer } = this.state;
 
     const render = new System(
+      'Render',
       ({ dt }, scene, [cameraIndex, thingIndex]) => {
         threeScene.children = [];
         const [camera] = cameraIndex.entities;
@@ -101,8 +143,8 @@ class Zap extends React.Component {
           const geoComp = thingEnt.getComponent(components.Geometry);
           const matComp = thingEnt.getComponent(components.MaterialEnum);
           const threeGeo = new THREE.Geometry();
-          threeGeo.vertices.push(...geoComp.vertices);
-          threeGeo.faces.push(...geoComp.faces);
+          threeGeo.vertices = geoComp.vertices;
+          threeGeo.faces = geoComp.faces;
           // TODO get actual material (+ standard)
           const threeMat = new THREE.MeshBasicMaterial({ color: matComp.value.color });
           const threeMesh = new THREE.Mesh(threeGeo, threeMat);
@@ -139,17 +181,20 @@ class Zap extends React.Component {
       this.state.initScene.update({ dt });
     };
     render();
+    this.forceUpdate();
   }
 
   getInitScene() {
     const scene = new Scene();
 
     const cameraEnt = new Entity();
-    const cameraComp = new components.CameraEnum(
+    const cameraCameraComp = new components.CameraEnum(
       components.CameraEnum.Which.Perspective,
       { fov: 75, aspect: this.getCanvasDimensions().aspectRation, near: 0.1, far: 1000.0 }
     );
-    cameraEnt.addComponent(cameraComp);
+    const cameraNameComp = new components.Name('Perspective Camera');
+    cameraEnt.addComponent(cameraCameraComp);
+    cameraEnt.addComponent(cameraNameComp);
     scene.addEntity(cameraEnt);
 
     const cubeEnt = new Entity();
@@ -162,8 +207,10 @@ class Zap extends React.Component {
       components.MaterialEnum.Which.StandardColor,
       { color: 0xffa500 }
     );
+    const cubeNameComp = new components.Name('Orange Cube');
     cubeEnt.addComponent(cubeGeoComp);
     cubeEnt.addComponent(cubeMatComp);
+    cubeEnt.addComponent(cubeNameComp);
     scene.addEntity(cubeEnt);
 
     return scene;

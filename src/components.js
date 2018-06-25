@@ -66,3 +66,9 @@ export class CameraEnum {
     this.value = value;
   }
 }
+
+export class Name {
+  constructor(name) {
+    this.name = name;
+  }
+}

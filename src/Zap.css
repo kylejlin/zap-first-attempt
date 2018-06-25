@@ -56,4 +56,5 @@
   left: 75vw;
   width: 25vw;
   height: 100vh;
+  overflow: auto;
 }

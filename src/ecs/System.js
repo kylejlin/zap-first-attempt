@@ -1,5 +1,6 @@
 class System {
-  constructor(update, indexSpecs) {
+  constructor(name, update, indexSpecs) {
+    this.name = name;
     this.update = update;
     this.indexSpecs = indexSpecs;
   }
