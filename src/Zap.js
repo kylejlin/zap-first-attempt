@@ -29,7 +29,7 @@ class Zap extends React.Component {
     super(props);
 
     this.state = {
-      initScene: this.getInitScene(),
+      initScene: null,
       currentScene: this.getInitScene(),
       isPlaying: false,
       inspected: null,
@@ -141,7 +141,7 @@ class Zap extends React.Component {
           <div className="Zap-HierarchyEntities">
             <h3>Entities</h3>
             <ul>
-              {(this.state.isPlaying ? this.state.currentScene : this.state.initScene).entities.map((entity) => {
+              {(this.state.isPlaying ? this.state.currentScene : this.state.currentScene).entities.map((entity) => {
                 const nameComp = entity.getComponent(components.Name);
                 const name = nameComp ? nameComp.name : 'Unnamed Entity';
                 return (
@@ -154,7 +154,7 @@ class Zap extends React.Component {
           <div className="Zap-HierarchySystems">
             <h3>Systems</h3>
             <ul >
-              {(this.state.isPlaying ? this.state.currentScene : this.state.initScene).systems.map((system) => {
+              {(this.state.isPlaying ? this.state.currentScene : this.state.currentScene).systems.map((system) => {
                 return (
                   <li>{system.name}</li>
                 );
@@ -212,10 +212,16 @@ class Zap extends React.Component {
     const previewThreeRenderer = new THREE.WebGLRenderer({
       canvas: this.previewCanvasRef.current,
     });
+    const playThreeScene = new THREE.Scene();
+    const playThreeRenderer = new THREE.WebGLRenderer({
+      canvas: this.playCanvasRef.current,
+    });
 
     this.setState({
       previewThreeScene,
       previewThreeRenderer,
+      playThreeScene,
+      playThreeRenderer,
     }, () => {
       this.resizeCanvases();
       this.setUpRenderSystem();
@@ -227,8 +233,8 @@ class Zap extends React.Component {
   }
 
   setUpRenderSystem() {
-    const { previewThreeScene, previewThreeRenderer } = this.state;
-
+    const { previewThreeScene, previewThreeRenderer, playThreeScene, playThreeRenderer } = this.state;
+// TODO
     const render = new System(
       'Render',
       ({ dt }, scene, [cameraIndex, thingIndex]) => {
@@ -263,7 +269,7 @@ class Zap extends React.Component {
         ])
       ]
     );
-    this.state.initScene.addSystem(render);
+    this.state.currentScene.addSystem(render);
     this.setState({
       render,
     }, () => {
@@ -278,7 +284,7 @@ class Zap extends React.Component {
       const now = performance.now();
       const dt = now - then;
       then = now;
-      this.state.initScene.update({ dt });
+      this.state.currentScene.update({ dt });
     };
     render();
     this.forceUpdate();
@@ -334,7 +340,7 @@ class Zap extends React.Component {
   // }
 
   resizeCanvases() {
-    const { previewThreeRenderer } = this.state;
+    const { previewThreeRenderer, playThreeRenderer } = this.state;
     //const { width, height, aspectRatio } = this.getCanvasDimensions();
     const previewCanvas = this.previewCanvasRef.current;
     const previewCanvasWidth = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
@@ -344,8 +350,16 @@ class Zap extends React.Component {
     previewCanvas.width = previewCanvasWidth;
     previewCanvas.height = previewCanvasHeight;
     previewThreeRenderer.setSize(previewCanvasWidth, previewCanvasHeight);
+
+    const playCanvas = this.playCanvasRef.current;
+    const playCanvasWidth = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
+    const playCanvasHeight = (100 - (this.state.previewPlayDividerTop + DIVIDER_HEIGHT) / 100) * window.innerHeight;
+    playCanvas.width = playCanvasWidth;
+    playCanvas.height = playCanvasHeight;
+    playThreeRenderer.setSize(playCanvasWidth, playCanvasHeight);
+
     // TODO correct scene shenannigans
-    const cameraComps = this.state.initScene.entities.map(ent => ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
+    const cameraComps = this.state.currentScene.entities.map(ent => ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
     cameraComps.forEach((cameraComp) => {
       cameraComp.value.aspectRatio = previewCanvasAspectRatio;
     });
