@@ -20,6 +20,9 @@ window.ecs = {
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
 const WINDOW_PADDING = 1.5;
+// In CSS vh units
+const DIVIDER_HEIGHT = 2;
+const COMMAND_BAR_HEIGHT = 10;
 
 class Zap extends React.Component {
   constructor(props) {
@@ -33,8 +36,10 @@ class Zap extends React.Component {
 
       canvasHierarchyDividerLeft: 50,
       hierarchyInspectorDividerLeft: 75,
+      previewPlayDividerTop: 53,
       isCanvasHierarchyDividerBeingDragged: false,
       isHierarchyInspectorDividerBeingDragged: false,
+      isPreviewPlayDividerTopBeingDragged: false,
     };
     this.previewCanvasRef = React.createRef();
     this.playCanvasRef = React.createRef();
@@ -60,6 +65,16 @@ class Zap extends React.Component {
             hierarchyInspectorDividerLeft: Math.max(leftVw, this.state.canvasHierarchyDividerLeft),
           });
         }
+
+        const topVh = 100 * e.clientY / window.innerHeight;
+        if (this.state.isPreviewPlayDividerTopBeingDragged) {
+          e.preventDefault();
+          this.setState({
+            previewPlayDividerTop: topVh,
+          }, () => {
+            this.resizeCanvases();
+          });
+        }
       }}
     >
         <div
@@ -79,18 +94,28 @@ class Zap extends React.Component {
         <div
           className="Zap-PreviewWindow"
           style={{
-            width: this.state.canvasHierarchyDividerLeft + 'vw'
+            width: this.state.canvasHierarchyDividerLeft + 'vw',
           }}
         >
           <canvas ref={this.previewCanvasRef}></canvas>
         </div>
 
-        <div className="Zap-PreviewPlay-Divider" />
+        <div
+          className="Zap-PreviewPlay-Divider"
+          style={{
+            top: this.state.previewPlayDividerTop + 'vh',
+            width: this.state.canvasHierarchyDividerLeft + 'vw',
+          }}
+          onMouseDown={() => this.setState({ isPreviewPlayDividerTopBeingDragged: true })}
+          onMouseUp={() => this.setState({ isPreviewPlayDividerTopBeingDragged: false })}
+        />
 
         <div
           className="Zap-PlayWindow"
           style={{
-            width: this.state.canvasHierarchyDividerLeft + 'vw'
+            width: this.state.canvasHierarchyDividerLeft + 'vw',
+            top: this.state.previewPlayDividerTop + DIVIDER_HEIGHT + 'vh',
+            height: 100 - (this.state.previewPlayDividerTop + DIVIDER_HEIGHT) + 'vh',
           }}
         >
           <canvas ref={this.playCanvasRef}></canvas>
@@ -183,17 +208,16 @@ class Zap extends React.Component {
   }
 
   componentDidMount() {
-    const threeScene = new THREE.Scene();
-    const threeRenderer = new THREE.WebGLRenderer({
+    const previewThreeScene = new THREE.Scene();
+    const previewThreeRenderer = new THREE.WebGLRenderer({
       canvas: this.previewCanvasRef.current,
     });
-    const { width, height } = this.getCanvasDimensions();
-    threeRenderer.setSize(width, height);
 
     this.setState({
-      threeScene,
-      threeRenderer,
+      previewThreeScene,
+      previewThreeRenderer,
     }, () => {
+      this.resizeCanvases();
       this.setUpRenderSystem();
     });
 
@@ -202,25 +226,13 @@ class Zap extends React.Component {
     });
   }
 
-  setUpEcs() {
-    // const scene = this.state.scene;
-    // const cameraEnt = new Entity();
-    // const cameraComp = new components.CameraEnum(
-    //   components.CameraEnum.Which.Perspective,
-    //   { fov: 75, aspect: this.state.aspect, near: 0.1, far: 1000.0 }
-    // );
-    // cameraEnt.addComponent(cameraComp);
-    // scene.addEntity(cameraEnt);
-    // this.setUpRenderSystem();
-  }
-
   setUpRenderSystem() {
-    const { threeScene, threeRenderer } = this.state;
+    const { previewThreeScene, previewThreeRenderer } = this.state;
 
     const render = new System(
       'Render',
       ({ dt }, scene, [cameraIndex, thingIndex]) => {
-        threeScene.children = [];
+        previewThreeScene.children = [];
         const [camera] = cameraIndex.entities;
         const { fov, aspectRatio, near, far } = camera.getComponent(components.CameraEnum).value;
         //console.log('cam',fov);
@@ -236,10 +248,10 @@ class Zap extends React.Component {
           // TODO get actual material (+ standard)
           const threeMat = new THREE.MeshBasicMaterial({ color: matComp.value.color });
           const threeMesh = new THREE.Mesh(threeGeo, threeMat);
-          threeScene.add(threeMesh);
+          previewThreeScene.add(threeMesh);
         }
 
-        threeRenderer.render(threeScene, threeCamera);
+        previewThreeRenderer.render(previewThreeScene, threeCamera);
       },
       [
         new IndexSpec([
@@ -278,7 +290,7 @@ class Zap extends React.Component {
     const cameraEnt = new Entity();
     const cameraCameraComp = new components.CameraEnum(
       components.CameraEnum.Which.Perspective,
-      { fov: 75, aspectRatio: this.getCanvasDimensions().aspectRatio, near: 0.1, far: 1000.0 }
+      { fov: 75, aspectRatio: 1, near: 0.1, far: 1000.0 }
     );
     const cameraNameComp = new components.Name('Perspective Camera');
     cameraEnt.addComponent(cameraCameraComp);
@@ -304,33 +316,38 @@ class Zap extends React.Component {
     return scene;
   }
 
-  getCanvasDimensions() {
-    const [width, height] = this.state
-      ? [
-        (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth,
-        0.45 * window.innerHeight,
-      ]
-      : [
-        0.50 * window.innerWidth,
-        0.45 * window.innerHeight
-      ];
-    return {
-      width,
-      height,
-      aspectRatio: width / height,
-    };
-  }
+  // getCanvasDimensions() {
+  //   const [width, height] = this.state
+  //     ? [
+  //       (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth,
+  //       0.45 * window.innerHeight,
+  //     ]
+  //     : [
+  //       0.50 * window.innerWidth,
+  //       0.45 * window.innerHeight
+  //     ];
+  //   return {
+  //     width,
+  //     height,
+  //     aspectRatio: width / height,
+  //   };
+  // }
 
   resizeCanvases() {
-    const { threeRenderer } = this.state;
-    const { width, height, aspectRatio } = this.getCanvasDimensions();
-    const canvas = this.previewCanvasRef.current;
-    canvas.width = width;
-    canvas.height = height;
-    threeRenderer.setSize(width, height);
+    const { previewThreeRenderer } = this.state;
+    //const { width, height, aspectRatio } = this.getCanvasDimensions();
+    const previewCanvas = this.previewCanvasRef.current;
+    const previewCanvasWidth = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
+    const previewCanvasHeight = ((this.state.previewPlayDividerTop - COMMAND_BAR_HEIGHT) / 100) * window.innerHeight;
+    const previewCanvasAspectRatio = previewCanvasWidth / previewCanvasHeight;
+    // TODO refactor declaratively
+    previewCanvas.width = previewCanvasWidth;
+    previewCanvas.height = previewCanvasHeight;
+    previewThreeRenderer.setSize(previewCanvasWidth, previewCanvasHeight);
+    // TODO correct scene shenannigans
     const cameraComps = this.state.initScene.entities.map(ent => ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
     cameraComps.forEach((cameraComp) => {
-      cameraComp.value.aspectRatio = aspectRatio;
+      cameraComp.value.aspectRatio = previewCanvasAspectRatio;
     });
   }
 }
