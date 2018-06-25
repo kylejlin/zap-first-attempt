@@ -237,51 +237,60 @@ class Zap extends React.Component {
 // TODO
     const render = new System(
       'Render',
-      ({ dt }, scene, [cameraIndex, thingIndex]) => {
-        // previewThreeScene.children = [];
-        //const [camera] = cameraIndex.entities;
-        //const { fov, aspectRatio, near, far } = camera.getComponent(components.CameraEnum).value;
-        // const threeCamera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
-        // threeCamera.position.set(0, 0, 5);
-        //
-        // for (const thingEnt of thingIndex.entities) {
-        //   const geoComp = thingEnt.getComponent(components.Geometry);
-        //   const matComp = thingEnt.getComponent(components.MaterialEnum);
-        //   const threeGeo = new THREE.Geometry();
-        //   threeGeo.vertices = geoComp.vertices;
-        //   threeGeo.faces = geoComp.faces;
-        //   // TODO get actual material (+ standard)
-        //   const threeMat = new THREE.MeshBasicMaterial({ color: matComp.value.color });
-        //   const threeMesh = new THREE.Mesh(threeGeo, threeMat);
-        //   previewThreeScene.add(threeMesh);
-        // }
-        //
-        // previewThreeRenderer.render(previewThreeScene, threeCamera);
+      ({ dt }, scene, [playerCameraIndex, debugCameraIndex, thingIndex]) => {
+        {
+          previewThreeScene.children = [];
+          const [debugCamera] = debugCameraIndex.entities;
+          const { fov, aspectRatio, near, far } = debugCamera.getComponent(components.CameraEnum).value;
+          const threeCamera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
+          threeCamera.position.set(0, 0, 5);
 
-        playThreeScene.children = [];
-        const [camera] = cameraIndex.entities;
-        const { fov, aspectRatio, near, far } = camera.getComponent(components.CameraEnum).value;
-        //console.log('cam',fov);
-        const playThreeCamera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
-        playThreeCamera.position.set(0, 0, 5);
+          for (const thingEnt of thingIndex.entities) {
+            const geoComp = thingEnt.getComponent(components.Geometry);
+            const matComp = thingEnt.getComponent(components.MaterialEnum);
+            const threeGeo = new THREE.Geometry();
+            threeGeo.vertices = geoComp.vertices;
+            threeGeo.faces = geoComp.faces;
+            // TODO get actual material (+ standard)
+            const threeMat = new THREE.MeshBasicMaterial({ color: matComp.value.color });
+            const threeMesh = new THREE.Mesh(threeGeo, threeMat);
+            previewThreeScene.add(threeMesh);
+          }
 
-        for (const thingEnt of thingIndex.entities) {
-          const geoComp = thingEnt.getComponent(components.Geometry);
-          const matComp = thingEnt.getComponent(components.MaterialEnum);
-          const threeGeo = new THREE.Geometry();
-          threeGeo.vertices = geoComp.vertices;
-          threeGeo.faces = geoComp.faces;
-          // TODO get actual material (+ standard)
-          const threeMat = new THREE.MeshBasicMaterial({ color: matComp.value.color });
-          const threeMesh = new THREE.Mesh(threeGeo, threeMat);
-          playThreeScene.add(threeMesh);
+          previewThreeRenderer.render(previewThreeScene, threeCamera);
         }
 
-        playThreeRenderer.render(playThreeScene, playThreeCamera);
+        {
+          playThreeScene.children = [];
+          const [playerCamera] = playerCameraIndex.entities;
+          const { fov, aspectRatio, near, far } = playerCamera.getComponent(components.CameraEnum).value;
+          //console.log('cam',fov);
+          const playThreeCamera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
+          playThreeCamera.position.set(0, 0, 5);
+
+          for (const thingEnt of thingIndex.entities) {
+            const geoComp = thingEnt.getComponent(components.Geometry);
+            const matComp = thingEnt.getComponent(components.MaterialEnum);
+            const threeGeo = new THREE.Geometry();
+            threeGeo.vertices = geoComp.vertices;
+            threeGeo.faces = geoComp.faces;
+            // TODO get actual material (+ standard)
+            const threeMat = new THREE.MeshBasicMaterial({ color: matComp.value.color });
+            const threeMesh = new THREE.Mesh(threeGeo, threeMat);
+            playThreeScene.add(threeMesh);
+          }
+
+          playThreeRenderer.render(playThreeScene, playThreeCamera);
+        }
       },
       [
         new IndexSpec([
           components.CameraEnum,
+          components.IsMainPlayerCamera
+        ]),
+        new IndexSpec([
+          components.CameraEnum,
+          components.IsMainDebugCamera
         ]),
         new IndexSpec([
           components.Geometry,
@@ -321,10 +330,22 @@ class Zap extends React.Component {
       components.CameraEnum.Which.Perspective,
       { fov: 75, aspectRatio: 1, near: 0.1, far: 1000.0 }
     );
-    const cameraNameComp = new components.Name('Perspective Camera');
+    const cameraNameComp = new components.Name('Player Camera');
     cameraEnt.addComponent(cameraCameraComp);
     cameraEnt.addComponent(cameraNameComp);
+    cameraEnt.addComponent(new components.IsMainPlayerCamera());
     scene.addEntity(cameraEnt);
+
+    const debugCameraEnt = new Entity();
+    const debugCameraNameComp = new components.Name('Debug Camera');
+    const debugCameraCameraComp = new components.CameraEnum(
+      components.CameraEnum.Which.Perspective,
+      { fov: 75, aspectRatio: 1, near: 0.1, far: 1000.0 }
+    );
+    debugCameraEnt.addComponent(debugCameraNameComp);
+    debugCameraEnt.addComponent(debugCameraCameraComp);
+    debugCameraEnt.addComponent(new components.IsMainDebugCamera());
+    scene.addEntity(debugCameraEnt);
 
     const cubeEnt = new Entity();
     const threeGeo = new THREE.BoxGeometry(3, 3, 3);

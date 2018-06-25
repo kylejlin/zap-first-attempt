@@ -67,6 +67,16 @@ export class CameraEnum {
   }
 }
 
+// tag
+export class IsMainPlayerCamera {
+
+}
+
+// tag
+export class IsMainDebugCamera {
+
+}
+
 export class Name {
   constructor(name) {
     this.name = name;
