@@ -69,7 +69,7 @@ class Zap extends React.Component {
                     return (
                       <div className="Zap-InspectorComponentProperty">
                         <div>{propertyName}:</div>
-                        <textarea value={stringifiedValue} />
+                        <textarea value={stringifiedValue} className="Zap-InspectorComponentPropertyEditor" />
                       </div>
                     );
                   })}
@@ -82,22 +82,29 @@ class Zap extends React.Component {
 
         <div className="Zap-HierarchyWindow">
           <h2>Hierarchy</h2>
-          <ul className="Zap-HierarchyEntities">
-            {(this.state.isPlaying ? this.state.currentScene : this.state.initScene).entities.map((entity) => {
-              const nameComp = entity.getComponent(components.Name);
-              const name = nameComp ? nameComp.name : 'Unnamed Entity';
-              return (
-                <li onClick={() => this.setState({ inspected: entity })}>{name}</li>
-              );
-            })}
-          </ul>
-          <ul className="Zap-HierarchySystems">
-            {(this.state.isPlaying ? this.state.currentScene : this.state.initScene).systems.map((system) => {
-              return (
-                <li>{system.name}</li>
-              );
-            })}
-          </ul>
+          <div className="Zap-HierarchyEntities">
+            <h3>Entities</h3>
+            <ul>
+              {(this.state.isPlaying ? this.state.currentScene : this.state.initScene).entities.map((entity) => {
+                const nameComp = entity.getComponent(components.Name);
+                const name = nameComp ? nameComp.name : 'Unnamed Entity';
+                return (
+                  <li onClick={() => this.setState({ inspected: entity })}>{name}</li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div className="Zap-HierarchySystems">
+            <h3>Systems</h3>
+            <ul >
+              {(this.state.isPlaying ? this.state.currentScene : this.state.initScene).systems.map((system) => {
+                return (
+                  <li>{system.name}</li>
+                );
+              })}
+            </ul>
+          </div>
         </div>
       </div>
     );
