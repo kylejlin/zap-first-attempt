@@ -54,6 +54,7 @@
   width: 8vh;
   height: 8vh;
   border: none;
+  border-radius: 2vh;
   margin: 1vh;
   outline: none;
 }
