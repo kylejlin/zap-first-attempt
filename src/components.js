@@ -29,6 +29,15 @@ export class Rotation {
   }
 }
 
+export class Scale {
+  constructor(x, y, z) {
+    // @type Float
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
+}
+
 export class Velocity {
   constructor(x, y, z) {
     // @type Float

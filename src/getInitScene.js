@@ -19,6 +19,15 @@ const getInitScene = () => {
       { fov: 75, aspectRatio: 1, near: 0.1, far: 1000.0 }
     )
   );
+  playerCameraEnt.addComponent(
+    new components.Position(0, 0, 5)
+  );
+  playerCameraEnt.addComponent(
+    new components.Rotation(0, 0, 0, 'XYZ')
+  );
+  playerCameraEnt.addComponent(
+    new components.Scale(1, 1, 1)
+  );
   scene.addEntity(playerCameraEnt);
 
   const debugCameraEnt = new Entity();
@@ -33,6 +42,15 @@ const getInitScene = () => {
       components.CameraEnum.Which.Perspective,
       { fov: 75, aspectRatio: 1, near: 0.1, far: 1000.0 }
     )
+  );
+  debugCameraEnt.addComponent(
+    new components.Position(0, 0, 5)
+  );
+  debugCameraEnt.addComponent(
+    new components.Rotation(0, 0, 0, 'XYZ')
+  );
+  debugCameraEnt.addComponent(
+    new components.Scale(1, 1, 1)
   );
   scene.addEntity(debugCameraEnt);
 
