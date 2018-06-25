@@ -28,6 +28,14 @@ class Entity {
     }
   }
 
+  getComponent(componentConstructor) {
+    return this[componentConstructor.name];
+  }
+
+  // getComponentByName(componentName) {
+  //   return this[componentName];
+  // }
+
   removeComponent(component) {
     this[component.constructor.name] = null;
 
