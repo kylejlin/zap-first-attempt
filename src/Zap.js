@@ -273,8 +273,8 @@ class Zap extends React.Component {
       playThreeRenderer,
     }, () => {
       this.resizeCanvases();
-      const render = getRenderSystem(this);
-      this.state.currentScene.addSystem(render);
+      const renderSystem = getRenderSystem(this);
+      this.state.currentScene.addSystem(renderSystem);
       this.startLoop();
     });
 
@@ -292,6 +292,8 @@ class Zap extends React.Component {
         const dt = now - then;
         this.state.currentScene.globals.deltaTime = dt;
         this.state.currentScene.update();
+      } else {
+        this.manuallyRender();
       }
       then = now;
     };
@@ -344,6 +346,26 @@ class Zap extends React.Component {
     playCameraComps.forEach((cameraComp) => {
       cameraComp.value.aspectRatio = playCanvasAspectRatio;
     });
+  }
+
+  manuallyRender() {
+    const renderSystem = getRenderSystem(this);
+    const renderSystemIndexes = [];
+    const scene = this.state.currentScene;
+    for (const spec of renderSystem.indexSpecs) {
+      let hasFoundIndex = false;
+      for (const index of scene.indexes) {
+        if (index.name === spec.name) {
+          hasFoundIndex = true;
+          renderSystemIndexes.push(index);
+          break;
+        }
+      }
+      if (!hasFoundIndex) {
+        throw new ReferenceError('Cannot find an index with name "' + spec.name + '".');
+      }
+    }
+    renderSystem.update(scene, renderSystemIndexes);
   }
 }
 

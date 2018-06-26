@@ -11,7 +11,7 @@ const getRenderSystem = (reactComponent) => {
     playThreeRenderer,
   } = reactComponent.state;
 
-  const render = new System(
+  const renderSystem = new System(
     'Render',
     (scene, [playerCameraIndex, debugCameraIndex, thingIndex]) => {
       renderOnPreviewCamera: {
@@ -96,7 +96,7 @@ const getRenderSystem = (reactComponent) => {
     ]
   );
 
-  return render;
+  return renderSystem;
 };
 
 export default getRenderSystem;
