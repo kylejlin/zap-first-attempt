@@ -6,6 +6,7 @@ import Entity from './ecs/Entity';
 
 import getInitScene from './getInitScene';
 import getRenderSystem from './getRenderSystem';
+import getDebugCameraControlSystem from './getDebugCameraControlSystem';
 
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
@@ -19,7 +20,7 @@ class Zap extends React.Component {
     super(props);
 
     this.state = {
-      initScene: null,
+      cachedInitScene: null,
       currentScene: getInitScene(),
       isPlaying: false,
       inspected: null,
@@ -73,7 +74,27 @@ class Zap extends React.Component {
             width: this.state.canvasHierarchyDividerLeft + 'vw'
           }}
         >
-          <button className="Zap-CommandButton">
+          <button
+            className="Zap-CommandButton"
+            onClick={() => {
+              if (this.state.isPlaying) {
+                this.setState((prevState) => {
+                  return {
+                    isPlaying: false,
+                    cachedInitScene: null,
+                    currentScene: prevState.cachedInitScene,
+                  };
+                });
+              } else {
+                this.setState((prevState) => {
+                  return {
+                    isPlaying: true,
+                    cachedInitScene: prevState.currentScene.deepClone(),
+                  };
+                });
+              }
+            }}
+          >
             <div className="Zap-IconPlay" />
           </button>
           <button className="Zap-CommandButton">
@@ -235,6 +256,8 @@ class Zap extends React.Component {
       this.resizeCanvases();
       const render = getRenderSystem(this);
       this.state.currentScene.addSystem(render);
+      const debugCameraControl = getDebugCameraControlSystem();
+      this.state.currentScene.addSystem(debugCameraControl);
       this.startLoop();
     });
 
@@ -252,7 +275,8 @@ class Zap extends React.Component {
       const now = performance.now();
       const dt = now - then;
       then = now;
-      this.state.currentScene.update({ dt });
+      this.state.currentScene.globals.deltaTime = dt;
+      this.state.currentScene.update();
     };
     render();
 

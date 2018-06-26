@@ -13,7 +13,7 @@ const getRenderSystem = (reactComponent) => {
 
   const render = new System(
     'Render',
-    ({ dt }, scene, [playerCameraIndex, debugCameraIndex, thingIndex]) => {
+    (scene, [playerCameraIndex, debugCameraIndex, thingIndex]) => {
       renderOnPreviewCamera: {
         previewThreeScene.children = [];
         const [debugCamera] = debugCameraIndex.entities;

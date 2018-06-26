@@ -3,8 +3,11 @@ import Entity from './ecs/Entity';
 import * as components from './components';
 import * as THREE from 'three';
 
+import getKeyDictGlobal from './getKeyDictGlobal';
+
 const getInitScene = () => {
   const scene = new Scene();
+  scene.globals.keyDict = getKeyDictGlobal();
 
   const playerCameraEnt = new Entity();
   playerCameraEnt.addComponent(

@@ -5,6 +5,7 @@ class Scene {
     this.entities = [];
     this.systems = [];
     this.indexes = [];
+    this.globals = {};
   }
 
   addEntity(entity) {
@@ -77,7 +78,7 @@ class Scene {
     }
   }
 
-  update(data) {
+  update() {
     for (const system of this.systems) {
       const systemIndexes = [];
       for (const spec of system.indexSpecs) {
@@ -93,8 +94,35 @@ class Scene {
           throw new ReferenceError('Cannot find an index with name "' + spec.name + '".');
         }
       }
-      system.update(data, this, systemIndexes);
+      system.update(this, systemIndexes);
     }
+  }
+
+  deepClone() {
+    const cloneEntity = (entity) => {
+      const clone = new Entity();
+    };
+    const cloneSystem = (system) => {
+
+    };
+    const cloneIndex = (index) => {
+
+    };
+    const cloneGlobals = (globals) => {
+      console.warn('Globals are not deep-cloned yet. This is for the sake of not breaking globals reliant on closure references.');
+      const clone = {};
+      for (const key in globals) {
+        clone[key] = globals[key];
+      }
+      return clone;
+    };
+
+    const clone = new Scene();
+    clone.entities = this.entities.map(cloneEntity);
+    clone.systems = this.systems.map(cloneSystem);
+    clone.indexes = this.indexes.map(cloneIndex);
+    clone.globals = cloneGlobals(this.globals);
+    return clone;
   }
 }
 
