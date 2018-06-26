@@ -32,9 +32,9 @@ class TextEditor extends React.Component {
   componentDidMount() {
     window.addEventListener('message', (event) => {
       const message = event.data;
-      if (message.type === 'SET_INITIAL_CONTENT') {
+      if (message.type === 'SET_INITIAL_CODE') {
         this.setState({
-          code: message.content,
+          code: message.code,
         });
       }
     });

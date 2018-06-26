@@ -7,6 +7,8 @@ import Entity from './ecs/Entity';
 import getInitScene from './getInitScene';
 import getRenderSystem from './getRenderSystem';
 
+import newSystemInitialCode from './newSystemInitialCode';
+
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
 const WINDOW_PADDING = 1.5;
@@ -208,6 +210,12 @@ class Zap extends React.Component {
                   <li>{system.name}</li>
                 );
               })}
+              <li
+                className="Zap-NewButton"
+                onClick={() => this.openTextEditor()}
+              >
+                New system
+              </li>
             </ul>
           </div>
         </div>
@@ -375,8 +383,8 @@ class Zap extends React.Component {
       if (message.type === 'READY') {
         editorWindow.postMessage(
           {
-            type: 'SET_INITIAL_CONTENT',
-            content: `import { System } from 'zapkit';`
+            type: 'SET_INITIAL_CODE',
+            code: newSystemInitialCode,
           },
           '*'
         );

@@ -5,6 +5,7 @@
   --text-color: #EEEEEE;
   --should-not-be-seen: #FF0000;
   --button-icon-color: #0088BB;
+  --new-button-color: #008800;
 }
 
 .Zap h2, .Zap h3 {
@@ -123,6 +124,7 @@
 
 .Zap-HierarchyEntities li, .Zap-HierarchySystems li {
   list-style: none;
+  margin: 0.5vw;
 }
 
 .Zap-HierarchyEntities, .Zap-HierarchySystems {
@@ -154,4 +156,10 @@
   color: var(--text-color);
   font-family: monospace;
   font-size: 1vw;
+}
+
+.Zap-NewButton {
+  background-color: var(--new-button-color);
+  border-radius: 0.25vw;
+  padding: 0.5vw;
 }
