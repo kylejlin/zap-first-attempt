@@ -382,10 +382,7 @@ class Zap extends React.Component {
         );
       }
     });
-    window.addEventListener('reload', () => {
-      editorWindow.close();
-    });
-    window.addEventListener('close', () => {
+    window.addEventListener('beforeunload', () => {
       editorWindow.close();
     });
   }
