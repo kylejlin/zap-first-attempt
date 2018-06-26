@@ -17,7 +17,7 @@ class Scene {
     for (const index of this.indexes) {
       let hasAll = true;
       for (const requirement of index.requirements) {
-        const component = entity[requirement.name];
+        const component = entity[requirement];
         if (component === null || component === undefined) {
           hasAll = false;
           break;
@@ -59,7 +59,7 @@ class Scene {
       for (const entity of this.entities) {
         let hasAll = true;
         for (const requirement of requirements) {
-          const component = entity[requirement.name];
+          const component = entity[requirement];
           if (component === null || component === undefined) {
             hasAll = false;
             break;

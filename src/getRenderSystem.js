@@ -20,18 +20,18 @@ const getRenderSystem = (reactComponent) => {
         if (!debugCamera) {
           break renderOnPreviewCamera;
         }
-        const { fov, aspectRatio, near, far } = debugCamera.getComponent(components.CameraEnum).value;
-        const { x: px, y: py, z: pz } = debugCamera.getComponent(components.Position);
-        const { x: rx, y: ry, z: rz, order: ro } = debugCamera.getComponent(components.Rotation);
-        const { x: sx, y: sy, z: sz } = debugCamera.getComponent(components.Scale);
+        const { fov, aspectRatio, near, far } = debugCamera.CameraEnum.value;
+        const { x: px, y: py, z: pz } = debugCamera.Position;
+        const { x: rx, y: ry, z: rz, order: ro } = debugCamera.Rotation;
+        const { x: sx, y: sy, z: sz } = debugCamera.Scale;
         const debugThreeCamera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
         debugThreeCamera.position.set(px, py, pz);
         debugThreeCamera.rotation.set(rx, ry, rz, ro);
         debugThreeCamera.scale.set(sx, sy, sz);
 
         for (const thingEnt of thingIndex.entities) {
-          const geoComp = thingEnt.getComponent(components.Geometry);
-          const matComp = thingEnt.getComponent(components.MaterialEnum);
+          const geoComp = thingEnt.Geometry;
+          const matComp = thingEnt.MaterialEnum;
           const threeGeo = new THREE.Geometry();
           threeGeo.vertices = geoComp.vertices;
           threeGeo.faces = geoComp.faces;
@@ -50,18 +50,18 @@ const getRenderSystem = (reactComponent) => {
         if (!playerCamera) {
           break renderOnPlayCamera;
         }
-        const { fov, aspectRatio, near, far } = playerCamera.getComponent(components.CameraEnum).value;
-        const { x: px, y: py, z: pz } = playerCamera.getComponent(components.Position);
-        const { x: rx, y: ry, z: rz, order: ro } = playerCamera.getComponent(components.Rotation);
-        const { x: sx, y: sy, z: sz } = playerCamera.getComponent(components.Scale);
+        const { fov, aspectRatio, near, far } = playerCamera.CameraEnum.value;
+        const { x: px, y: py, z: pz } = playerCamera.Position;
+        const { x: rx, y: ry, z: rz, order: ro } = playerCamera.Rotation;
+        const { x: sx, y: sy, z: sz } = playerCamera.Scale;
         const playThreeCamera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far);
         playThreeCamera.position.set(px, py, pz);
         playThreeCamera.rotation.set(rx, ry, rz, ro);
         playThreeCamera.scale.set(sx, sy, sz);
 
         for (const thingEnt of thingIndex.entities) {
-          const geoComp = thingEnt.getComponent(components.Geometry);
-          const matComp = thingEnt.getComponent(components.MaterialEnum);
+          const geoComp = thingEnt.Geometry;
+          const matComp = thingEnt.MaterialEnum;
           const threeGeo = new THREE.Geometry();
           threeGeo.vertices = geoComp.vertices;
           threeGeo.faces = geoComp.faces;
@@ -76,22 +76,22 @@ const getRenderSystem = (reactComponent) => {
     },
     [
       new IndexSpec([
-        components.CameraEnum,
-        components.IsMainPlayerCamera,
-        components.Position,
-        components.Rotation,
-        components.Scale
+        'CameraEnum',
+        'IsMainPlayerCamera',
+        'Position',
+        'Rotation',
+        'Scale'
       ]),
       new IndexSpec([
-        components.CameraEnum,
-        components.IsMainDebugCamera,
-        components.Position,
-        components.Rotation,
-        components.Scale
+        'CameraEnum',
+        'IsMainDebugCamera',
+        'Position',
+        'Rotation',
+        'Scale'
       ]),
       new IndexSpec([
-        components.Geometry,
-        components.MaterialEnum,
+        'Geometry',
+        'MaterialEnum',
       ])
     ]
   );

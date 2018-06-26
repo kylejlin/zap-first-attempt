@@ -182,7 +182,7 @@ class Zap extends React.Component {
             <h3>Entities</h3>
             <ul>
               {this.state.currentScene.entities.map((entity) => {
-                const nameComp = entity.getComponent(components.Name);
+                const nameComp = entity.Name;
                 const name = nameComp ? nameComp.name : 'Unnamed Entity';
                 return (
                   <li
@@ -339,7 +339,7 @@ class Zap extends React.Component {
       aspectRatio: previewCanvasAspectRatio,
     } = this.getPreviewCanvasDimensions();
     previewThreeRenderer.setSize(previewCanvasWidth, previewCanvasHeight);
-    const debugCameraComps = this.state.currentScene.entities.map(ent => ent.getComponent(components.IsMainDebugCamera) && ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
+    const debugCameraComps = this.state.currentScene.entities.map(ent => ent.IsMainDebugCamera && ent.CameraEnum).filter(ent => ent !== undefined && ent !== null);
     debugCameraComps.forEach((cameraComp) => {
       cameraComp.value.aspectRatio = previewCanvasAspectRatio;
     });
@@ -350,7 +350,7 @@ class Zap extends React.Component {
       aspectRatio: playCanvasAspectRatio,
     } = this.getPlayCanvasDimensions();
     playThreeRenderer.setSize(playCanvasWidth, playCanvasHeight);
-    const playCameraComps = this.state.currentScene.entities.map(ent => ent.getComponent(components.IsMainPlayerCamera) && ent.getComponent(components.CameraEnum)).filter(ent => ent !== undefined && ent !== null);
+    const playCameraComps = this.state.currentScene.entities.map(ent => ent.IsMainPlayerCamera && ent.CameraEnum).filter(ent => ent !== undefined && ent !== null);
     playCameraComps.forEach((cameraComp) => {
       cameraComp.value.aspectRatio = playCanvasAspectRatio;
     });

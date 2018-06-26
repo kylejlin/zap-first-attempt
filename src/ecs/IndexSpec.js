@@ -1,7 +1,7 @@
 class IndexSpec {
   constructor(requirements) {
     this.requirements = requirements;
-    this.name = requirements.map(f => f.name).sort().join(',');
+    this.name = requirements.sort().join(',');
   }
 }
 
