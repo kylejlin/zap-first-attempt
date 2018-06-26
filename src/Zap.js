@@ -175,7 +175,7 @@ class Zap extends React.Component {
             width: this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw',
           }}
         >
-          <h2>Hierarchy</h2>
+          <h2 onClick={() => this.openTextEditor()}>Hierarchy</h2>
           <div className="Zap-HierarchyEntities">
             <h3>Entities</h3>
             <ul>
@@ -366,6 +366,28 @@ class Zap extends React.Component {
       }
     }
     renderSystem.update(scene, renderSystemIndexes);
+  }
+
+  openTextEditor() {
+    const editorWindow = window.open('/#editor');
+    window.addEventListener('message', (event) => {
+      const message = event.data;
+      if (message.type === 'READY') {
+        editorWindow.postMessage(
+          {
+            type: 'SET_INITIAL_CONTENT',
+            content: `import { System } from 'zapkit';`
+          },
+          '*'
+        );
+      }
+    });
+    window.addEventListener('reload', () => {
+      editorWindow.close();
+    });
+    window.addEventListener('close', () => {
+      editorWindow.close();
+    });
   }
 }
 
