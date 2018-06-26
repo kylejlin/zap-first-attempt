@@ -110,7 +110,10 @@ class Scene {
         }
         const value = entity[key];
         const cloneValue = JSON.parse(JSON.stringify(value));
-        cloneValue.constructor = value.constructor;
+        Object.defineProperty(cloneValue, 'constructor', {
+          value: value.constructor,
+          enumerable: false,
+        });
         clone[key] = cloneValue;
       }
       return clone;
