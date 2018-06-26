@@ -6,7 +6,6 @@ import Entity from './ecs/Entity';
 
 import getInitScene from './getInitScene';
 import getRenderSystem from './getRenderSystem';
-import getDebugCameraControlSystem from './getDebugCameraControlSystem';
 
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
@@ -276,8 +275,6 @@ class Zap extends React.Component {
       this.resizeCanvases();
       const render = getRenderSystem(this);
       this.state.currentScene.addSystem(render);
-      const debugCameraControl = getDebugCameraControlSystem();
-      this.state.currentScene.addSystem(debugCameraControl);
       this.startLoop();
     });
 
@@ -289,20 +286,16 @@ class Zap extends React.Component {
   startLoop() {
     let then = performance.now();
     const render = () => {
-      if (this.state.runStatus === 'RUNNING') {
-        requestAnimationFrame(render);
-      }
+      requestAnimationFrame(render);
       const now = performance.now();
-      const dt = now - then;
+      if (this.state.runStatus === 'RUNNING') {
+        const dt = now - then;
+        this.state.currentScene.globals.deltaTime = dt;
+        this.state.currentScene.update();
+      }
       then = now;
-      this.state.currentScene.globals.deltaTime = dt;
-      this.state.currentScene.update();
     };
     render();
-
-    this.setState({
-      render,
-    });
   }
 
   getPreviewCanvasDimensions() {
@@ -351,10 +344,6 @@ class Zap extends React.Component {
     playCameraComps.forEach((cameraComp) => {
       cameraComp.value.aspectRatio = playCanvasAspectRatio;
     });
-
-    if (this.state.render) {
-      this.state.render();
-    }
   }
 }
 
