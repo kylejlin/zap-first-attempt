@@ -6,7 +6,7 @@ const getDebugCameraControlSystem = () => {
   const debugCameraControl = new System(
     'Debug Camera Controls',
     (scene, [debugCameraIndex]) => {
-      console.log(scene.globals.keyDict);
+      //
     },
     [
       new IndexSpec([

@@ -1,4 +1,6 @@
 import Index from './Index';
+import IndexSpec from './IndexSpec';
+import Entity from './Entity';
 
 class Scene {
   constructor() {
@@ -98,31 +100,51 @@ class Scene {
     }
   }
 
-  deepClone() {
+  getBackup() {
     const cloneEntity = (entity) => {
       const clone = new Entity();
-    };
-    const cloneSystem = (system) => {
-
-    };
-    const cloneIndex = (index) => {
-
-    };
-    const cloneGlobals = (globals) => {
-      console.warn('Globals are not deep-cloned yet. This is for the sake of not breaking globals reliant on closure references.');
-      const clone = {};
-      for (const key in globals) {
-        clone[key] = globals[key];
+      clone.scene = this;
+      for (const key in entity) {
+        if (key === 'scene') {
+          continue;
+        }
+        const value = entity[key];
+        const cloneValue = JSON.parse(JSON.stringify(value));
+        cloneValue.constructor = value.constructor;
+        clone[key] = cloneValue;
       }
       return clone;
     };
 
-    const clone = new Scene();
-    clone.entities = this.entities.map(cloneEntity);
-    clone.systems = this.systems.map(cloneSystem);
-    clone.indexes = this.indexes.map(cloneIndex);
-    clone.globals = cloneGlobals(this.globals);
-    return clone;
+    const cloneIndex = (index) => {
+      const spec = new IndexSpec(index.requirements);
+      return new Index(spec);
+    };
+
+    const newEntities = this.entities.map(cloneEntity);
+    const newIndexes = this.indexes.map(cloneIndex);
+    for (let i = 0; i < newIndexes.length; i++) {
+      const newIndex = newIndexes[i];
+      const originalIndex = this.indexes[i];
+      for (let j = 0; j < newEntities.length; j++) {
+        const newEntity = newEntities[j];
+        const originalEntity = this.entities[j];
+        if (originalIndex.entities.includes(originalEntity)) {
+          newIndex.entities.push(newEntity);
+        }
+      }
+    }
+
+    const backup = {
+      entities: newEntities,
+      indexes: newIndexes,
+    };
+    return backup;
+  }
+
+  restoreWithBackup(backup) {
+    this.entities = backup.entities;
+    this.indexes = backup.indexes;
   }
 }
 

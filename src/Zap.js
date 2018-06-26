@@ -20,9 +20,9 @@ class Zap extends React.Component {
     super(props);
 
     this.state = {
-      cachedInitScene: null,
+      initSceneBackup: null,
       currentScene: getInitScene(),
-      isPlaying: false,
+      runStatus: 'STOPPED',
       inspected: null,
 
       canvasHierarchyDividerLeft: 50,
@@ -77,28 +77,48 @@ class Zap extends React.Component {
           <button
             className="Zap-CommandButton"
             onClick={() => {
-              if (this.state.isPlaying) {
+              if (this.state.runStatus === 'RUNNING' || this.state.runStatus === 'PAUSED') {
+                this.state.currentScene.restoreWithBackup(this.state.initSceneBackup);
+                this.resizeCanvases();
                 this.setState((prevState) => {
                   return {
-                    isPlaying: false,
-                    cachedInitScene: null,
-                    currentScene: prevState.cachedInitScene,
+                    runStatus: 'STOPPED',
+                    initSceneBackup: null,
                   };
                 });
               } else {
                 this.setState((prevState) => {
                   return {
-                    isPlaying: true,
-                    cachedInitScene: prevState.currentScene.deepClone(),
+                    runStatus: 'RUNNING',
+                    initSceneBackup: prevState.currentScene.getBackup(),
                   };
                 });
               }
             }}
           >
-            <div className="Zap-IconPlay" />
+            {this.state.runStatus !== 'STOPPED'
+              ? <div className="Zap-IconStop" />
+              : <div className="Zap-IconPlay" />
+            }
           </button>
-          <button className="Zap-CommandButton">
-            <div className="Zap-IconPause" />
+          <button
+            className={'Zap-CommandButton' + (this.state.runStatus !== 'STOPPED' ? '' : ' Zap-DisabledButton')}
+            onClick={() => {
+              if (this.state.runStatus === 'RUNNING') {
+                this.setState({
+                  runStatus: 'PAUSED',
+                });
+              } else if (this.state.runStatus === 'PAUSED') {
+                this.setState({
+                  runStatus: 'RUNNING',
+                });
+              }
+            }}
+          >
+            {this.state.runStatus === 'PAUSED'
+              ? <div className="Zap-IconPlay" />
+              : <div className="Zap-IconPause" />
+            }
           </button>
         </div>
 
@@ -160,7 +180,7 @@ class Zap extends React.Component {
           <div className="Zap-HierarchyEntities">
             <h3>Entities</h3>
             <ul>
-              {(this.state.isPlaying ? this.state.currentScene : this.state.currentScene).entities.map((entity) => {
+              {this.state.currentScene.entities.map((entity) => {
                 const nameComp = entity.getComponent(components.Name);
                 const name = nameComp ? nameComp.name : 'Unnamed Entity';
                 return (
@@ -184,7 +204,7 @@ class Zap extends React.Component {
           <div className="Zap-HierarchySystems">
             <h3>Systems</h3>
             <ul >
-              {(this.state.isPlaying ? this.state.currentScene : this.state.currentScene).systems.map((system) => {
+              {this.state.currentScene.systems.map((system) => {
                 return (
                   <li>{system.name}</li>
                 );
@@ -269,7 +289,7 @@ class Zap extends React.Component {
   startLoop() {
     let then = performance.now();
     const render = () => {
-      if (this.state.isPlaying) {
+      if (this.state.runStatus === 'RUNNING') {
         requestAnimationFrame(render);
       }
       const now = performance.now();
