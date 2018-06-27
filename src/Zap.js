@@ -42,7 +42,7 @@ class Zap extends React.Component {
     this.playCanvasRef = React.createRef();
   }
 
-  render() {
+  render = () => {
     return (
       <div
         className="Zap"
@@ -278,7 +278,7 @@ class Zap extends React.Component {
     );
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     const previewThreeScene = new THREE.Scene();
     const previewThreeRenderer = new THREE.WebGLRenderer({
       canvas: this.previewCanvasRef.current,
@@ -303,7 +303,7 @@ class Zap extends React.Component {
     });
   }
 
-  startLoop() {
+  startLoop = () => {
     let then = performance.now();
     const gameLoop = () => {
       requestAnimationFrame(gameLoop);
@@ -318,7 +318,7 @@ class Zap extends React.Component {
     gameLoop();
   }
 
-  getPreviewCanvasDimensions() {
+  getPreviewCanvasDimensions = () => {
     const width = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
     const height = ((this.state.previewPlayDividerTop - COMMAND_BAR_HEIGHT) / 100) * window.innerHeight;
     const aspectRatio = width / height;
@@ -329,7 +329,7 @@ class Zap extends React.Component {
     };
   }
 
-  getPlayCanvasDimensions() {
+  getPlayCanvasDimensions = () => {
     const width = (this.state.canvasHierarchyDividerLeft / 100) * window.innerWidth;
     const height = ((100 - (this.state.previewPlayDividerTop + DIVIDER_HEIGHT)) / 100) * window.innerHeight;
     const aspectRatio = width / height;
@@ -340,7 +340,7 @@ class Zap extends React.Component {
     };
   }
 
-  resizeRenderers() {
+  resizeRenderers = () => {
     const { previewThreeRenderer, playThreeRenderer } = this.state;
 
     const {
@@ -370,12 +370,12 @@ class Zap extends React.Component {
     }
   }
 
-  manuallyRender() {
+  manuallyRender = () => {
     const scene = (() => {
       if (this.state.runStatus !== 'STOPPED') {
         return this.state.currentScene;
       }
-      
+
       const scene = this.state.currentScene.intoSceneWithoutSystems();
       scene.addSystem(getRenderSystem(this));
       return scene;
@@ -398,7 +398,7 @@ class Zap extends React.Component {
     renderSystem.update(scene, renderSystemIndexes);
   }
 
-  newSystem() {
+  newSystem = () => {
     const newSystem = new VirtualSystem(
       'MyAwesomeSystem',
       newSystemInitialCode
@@ -414,7 +414,7 @@ class Zap extends React.Component {
     });
   }
 
-  editSystem(systemName) {
+  editSystem = (systemName) => {
     const existingEditorWindow = this.state.systemWindowDict[systemName];
     if (existingEditorWindow && !existingEditorWindow.closed) {
       existingEditorWindow.focus();
@@ -453,7 +453,7 @@ class Zap extends React.Component {
     });
   }
 
-  play() {
+  play = () => {
     this.setState((prevState) => {
       const liveScene = prevState.currentScene.intoScene();
       liveScene.addSystem(getRenderSystem(this));
@@ -465,7 +465,7 @@ class Zap extends React.Component {
     });
   }
 
-  stop() {
+  stop = () => {
     this.setState((prevState) => {
       return {
         runStatus: 'STOPPED',
