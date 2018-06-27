@@ -9,6 +9,10 @@ class VirtualEntity {
         value: true,
         enumerable: false,
       },
+      isVirtual: {
+        value: true,
+        enumerable: false,
+      },
     });
   }
 

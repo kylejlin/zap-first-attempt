@@ -12,6 +12,8 @@ import newSystemInitialCode from './newSystemInitialCode';
 
 import PlayButton from './PlayButton';
 import PauseButton from './PauseButton';
+import VirtualEntityInspector from './VirtualEntityInspector';
+import VirtualSystemInspector from './VirtualSystemInspector';
 
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
@@ -216,50 +218,33 @@ class Zap extends React.Component {
           }}
         >
           <h2>Inspector</h2>
-          {(this.state.inspected && this.state.inspected.isEntity)
-            ? Object.keys(this.state.inspected).filter((componentName) => {
-              const component = this.state.inspected[componentName];
-              return 'scene' !== componentName && component !== null;
-            }).map((componentName) => {
-              return (
-                <div className="Zap-InspectorComponent">
-                  <h3>{componentName}</h3>
-                  {Object.keys(this.state.inspected[componentName]).filter(n => n !== 'name').map((propertyName) => {
-                    const stringifiedValue = JSON.stringify(this.state.inspected[componentName][propertyName], null, 4);
-                    return (
-                      <div className="Zap-InspectorComponentProperty">
-                        <div>{propertyName}:</div>
-                        <textarea value={stringifiedValue} className="Zap-InspectorComponentPropertyEditor" />
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            }).concat([
-              <li
-                className="Zap-AddButton"
-                onClick={() => this.openAddComponentMenu()}
-              >
-                Add component
-              </li>
-            ])
-            : ((this.state.inspected && this.state.inspected.isSystem)
-              ? (
-                <div className="Zap-InspectorSystem">
-                  <div className="Zap-SystemName">
-                    {this.state.inspected.name}
-                  </div>
-                  <div
-                    className="Zap-EditButton"
-                    onClick={() => this.editSystem(this.state.inspected.name)}
-                  >
-                    Edit system
-                  </div>
-                </div>
-              )
-              : null
-            )
-          }
+          {(() => {
+            if (this.state.inspected === null) {
+              return null;
+            }
+            if (this.state.inspected.isEntity) {
+              if (this.state.inspected.isVirtual) {
+                return (
+                  <VirtualEntityInspector
+                    virtualEntity={this.state.inspected}
+                    openAddComponentMenu={this.openAddComponentMenu}
+                  />
+                );
+              }
+              return null; // TODO EntityInspector
+            }
+            if (this.state.inspected.isSystem) {
+              if (this.state.inspected.isVirtual) {
+                return (
+                  <VirtualSystemInspector
+                    systemName={this.state.inspected.name}
+                    editSystem={this.editSystem}
+                  />
+                );
+              }
+              return null; // TODO SystemInspector
+            }
+          })()}
         </div>
       </div>
     );
