@@ -10,10 +10,9 @@ import compileSystem from './compileSystem';
 
 import newSystemInitialCode from './newSystemInitialCode';
 
-import PlayButton from './PlayButton';
-import PauseButton from './PauseButton';
 import InspectorWindow from './InspectorWindow';
 import HierarchyWindow from './HierarchyWindow';
+import CommandBar from './CommandBar';
 
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
@@ -53,26 +52,15 @@ class Zap extends React.Component {
         className="Zap"
         onMouseMove={this.updateDraggedDivider}
       >
-        <div
-          className="Zap-CommandBar"
-          style={{
-            width: this.state.canvasHierarchyDividerLeft + 'vw'
-          }}
-        >
-          <PlayButton
-            isInPlayMode={this.state.runStatus !== 'STOPPED'}
+        <CommandBar
+          width={this.state.canvasHierarchyDividerLeft + 'vw'}
+          runStatus={this.state.runStatus}
 
-            play={this.play}
-            stop={this.stop}
-          />
-          <PauseButton
-            isInPlayMode={this.state.runStatus !== 'STOPPED'}
-            isPaused={this.state.runStatus === 'PAUSED'}
-
-            pause={this.pause}
-            resume={this.resume}
-          />
-        </div>
+          play={this.play}
+          stop={this.stop}
+          pause={this.pause}
+          resume={this.resume}
+        />
 
         <div
           className="Zap-PreviewWindow"
