@@ -1,6 +1,7 @@
 import VirtualEntity from './VirtualEntity';
 import Scene from './Scene';
 import Entity from './Entity';
+import compileSystem from '../compileSystem';
 
 class VirtualScene {
   constructor() {
