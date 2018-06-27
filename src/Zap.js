@@ -51,34 +51,8 @@ class Zap extends React.Component {
     return (
       <div
         className="Zap"
-        onMouseMove={(e) => {
-        const leftVw = 100 * e.clientX / window.innerWidth;
-        if (this.state.isCanvasHierarchyDividerBeingDragged) {
-          e.preventDefault();
-          this.setState({
-            canvasHierarchyDividerLeft: Math.min(leftVw, this.state.hierarchyInspectorDividerLeft),
-          }, () => {
-            this.resizeRenderers();
-          });
-        }
-        if (this.state.isHierarchyInspectorDividerBeingDragged) {
-          e.preventDefault();
-          this.setState({
-            hierarchyInspectorDividerLeft: Math.max(leftVw, this.state.canvasHierarchyDividerLeft),
-          });
-        }
-
-        const topVh = 100 * e.clientY / window.innerHeight;
-        if (this.state.isPreviewPlayDividerTopBeingDragged) {
-          e.preventDefault();
-          this.setState({
-            previewPlayDividerTop: topVh,
-          }, () => {
-            this.resizeRenderers();
-          });
-        }
-      }}
-    >
+        onMouseMove={this.updateDraggedDivider}
+      >
         <div
           className="Zap-CommandBar"
           style={{
@@ -172,7 +146,7 @@ class Zap extends React.Component {
           left={DIVIDER_WIDTH + this.state.hierarchyInspectorDividerLeft + 'vw'}
           width={100 - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
           inspected={this.state.inspected}
-          
+
           openAddComponentMenu={this.openAddComponentMenu}
           editSystem={this.editSystem}
         />
@@ -415,6 +389,34 @@ class Zap extends React.Component {
           : system,
       };
     });
+  }
+
+  updateDraggedDivider = (e) => {
+    const leftVw = 100 * e.clientX / window.innerWidth;
+    if (this.state.isCanvasHierarchyDividerBeingDragged) {
+      e.preventDefault();
+      this.setState({
+        canvasHierarchyDividerLeft: Math.min(leftVw, this.state.hierarchyInspectorDividerLeft),
+      }, () => {
+        this.resizeRenderers();
+      });
+    }
+    if (this.state.isHierarchyInspectorDividerBeingDragged) {
+      e.preventDefault();
+      this.setState({
+        hierarchyInspectorDividerLeft: Math.max(leftVw, this.state.canvasHierarchyDividerLeft),
+      });
+    }
+
+    const topVh = 100 * e.clientY / window.innerHeight;
+    if (this.state.isPreviewPlayDividerTopBeingDragged) {
+      e.preventDefault();
+      this.setState({
+        previewPlayDividerTop: topVh,
+      }, () => {
+        this.resizeRenderers();
+      });
+    }
   }
 }
 
