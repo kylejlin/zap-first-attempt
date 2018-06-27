@@ -372,13 +372,13 @@ class Zap extends React.Component {
 
   manuallyRender() {
     const scene = (() => {
-      if (this.state.runStatus === 'STOPPED') {
-        const scene = this.state.currentScene.intoSceneWithoutSystems();
-        scene.addSystem(getRenderSystem(this));
-        return scene;
-      } else {
+      if (this.state.runStatus !== 'STOPPED') {
         return this.state.currentScene;
       }
+      
+      const scene = this.state.currentScene.intoSceneWithoutSystems();
+      scene.addSystem(getRenderSystem(this));
+      return scene;
     })();
     const renderSystem = scene.systems.find(s => s.name === 'Render');
     const renderSystemIndexes = [];
