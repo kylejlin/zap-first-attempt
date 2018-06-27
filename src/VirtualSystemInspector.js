@@ -9,12 +9,12 @@ const VirtualSystemInspector = ({
     <div className="Zap-SystemName">
       {systemName}
     </div>
-    <div
-      className="Zap-EditButton"
+    <button
+      className="Zap-Button Zap-EditButton"
       onClick={() => editSystem(systemName)}
     >
       Edit system
-    </div>
+    </button>
   </div>
 );
 

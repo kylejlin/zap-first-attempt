@@ -191,11 +191,13 @@ class Zap extends React.Component {
                   </li>
                 );
               })}
-              <li
-                className="Zap-AddButton"
-                onClick={() => this.addSystem()}
-              >
-                Add system
+              <li>
+                <button
+                  className="Zap-Button Zap-AddButton"
+                  onClick={() => this.addSystem()}
+                >
+                  Add system
+                </button>
               </li>
             </ul>
           </div>

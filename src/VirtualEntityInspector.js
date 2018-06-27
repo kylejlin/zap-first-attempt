@@ -27,12 +27,12 @@ const VirtualEntityInspector = ({
         );
       })
     }
-    <li
-      className="Zap-AddButton"
+    <button
+      className="Zap-Button Zap-AddButton"
       onClick={openAddComponentMenu}
     >
       Add component
-    </li>
+    </button>
   </div>
 );
 
