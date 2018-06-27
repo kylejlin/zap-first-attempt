@@ -13,7 +13,7 @@ const getRenderSystem = (reactComponent) => {
 
   const renderSystem = new System(
     'Render',
-    (scene, [playerCameraIndex, debugCameraIndex, thingIndex]) => {
+    (scene, [playerCameraIndex, debugCameraIndex, renderableIndex]) => {
       renderOnPreviewCamera: {
         previewThreeScene.children = [];
         const [debugCamera] = debugCameraIndex.entities;
@@ -29,15 +29,21 @@ const getRenderSystem = (reactComponent) => {
         debugThreeCamera.rotation.set(rx, ry, rz, ro);
         debugThreeCamera.scale.set(sx, sy, sz);
 
-        for (const thingEnt of thingIndex.entities) {
-          const geoComp = thingEnt.Geometry;
-          const matComp = thingEnt.MaterialEnum;
+        for (const renderableEnt of renderableIndex.entities) {
+          const geoComp = renderableEnt.Geometry;
+          const matComp = renderableEnt.MaterialEnum;
+          const { x: px, y: py, z: pz } = renderableEnt.Position;
+          const { x: rx, y: ry, z: rz, order: ro } = renderableEnt.Rotation;
+          const { x: sx, y: sy, z: sz } = renderableEnt.Scale;
           const threeGeo = new THREE.Geometry();
           threeGeo.vertices = geoComp.vertices;
           threeGeo.faces = geoComp.faces;
           // TODO get actual material (+ standard)
           const threeMat = new THREE.MeshBasicMaterial({ color: matComp.value.color });
           const threeMesh = new THREE.Mesh(threeGeo, threeMat);
+          threeMesh.position.set(px, py, pz);
+          threeMesh.rotation.set(rx, ry, rz, ro);
+          threeMesh.scale.set(sx, sy, sz);
           previewThreeScene.add(threeMesh);
         }
 
@@ -59,15 +65,21 @@ const getRenderSystem = (reactComponent) => {
         playThreeCamera.rotation.set(rx, ry, rz, ro);
         playThreeCamera.scale.set(sx, sy, sz);
 
-        for (const thingEnt of thingIndex.entities) {
-          const geoComp = thingEnt.Geometry;
-          const matComp = thingEnt.MaterialEnum;
+        for (const renderableEnt of renderableIndex.entities) {
+          const geoComp = renderableEnt.Geometry;
+          const matComp = renderableEnt.MaterialEnum;
+          const { x: px, y: py, z: pz } = renderableEnt.Position;
+          const { x: rx, y: ry, z: rz, order: ro } = renderableEnt.Rotation;
+          const { x: sx, y: sy, z: sz } = renderableEnt.Scale;
           const threeGeo = new THREE.Geometry();
           threeGeo.vertices = geoComp.vertices;
           threeGeo.faces = geoComp.faces;
           // TODO get actual material (+ standard)
           const threeMat = new THREE.MeshBasicMaterial({ color: matComp.value.color });
           const threeMesh = new THREE.Mesh(threeGeo, threeMat);
+          threeMesh.position.set(px, py, pz);
+          threeMesh.rotation.set(rx, ry, rz, ro);
+          threeMesh.scale.set(sx, sy, sz);
           playThreeScene.add(threeMesh);
         }
 
@@ -92,6 +104,9 @@ const getRenderSystem = (reactComponent) => {
       new IndexSpec([
         'Geometry',
         'MaterialEnum',
+        'Position',
+        'Rotation',
+        'Scale'
       ])
     ]
   );

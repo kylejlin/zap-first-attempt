@@ -74,6 +74,15 @@ const getInitScene = () => {
       { color: 0xffa500 }
     )
   );
+  cubeEnt.addComponent(
+    components.Position(0, 0, 0)
+  );
+  cubeEnt.addComponent(
+    components.Rotation(0, 0, 0, 'XYZ')
+  );
+  cubeEnt.addComponent(
+    components.Scale(1, 1, 1)
+  );
   scene.addEntity(cubeEnt);
 
   return scene;
