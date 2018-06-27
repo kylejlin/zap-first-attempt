@@ -87,12 +87,14 @@ class Zap extends React.Component {
         >
           <PlayButton
             isInPlayMode={this.state.runStatus !== 'STOPPED'}
+
             play={this.play}
             stop={this.stop}
           />
           <PauseButton
             isInPlayMode={this.state.runStatus !== 'STOPPED'}
             isPaused={this.state.runStatus === 'PAUSED'}
+
             pause={this.pause}
             resume={this.resume}
           />
@@ -151,6 +153,7 @@ class Zap extends React.Component {
           entities={this.state.currentScene.entities}
           systems={this.state.currentScene.systems}
           inspected={this.state.inspected}
+
           toggleEntitySelection={this.toggleEntitySelection}
           toggleSystemSelection={this.toggleSystemSelection}
           addSystem={this.addSystem}
@@ -169,6 +172,7 @@ class Zap extends React.Component {
           left={DIVIDER_WIDTH + this.state.hierarchyInspectorDividerLeft + 'vw'}
           width={100 - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
           inspected={this.state.inspected}
+          
           openAddComponentMenu={this.openAddComponentMenu}
           editSystem={this.editSystem}
         />
