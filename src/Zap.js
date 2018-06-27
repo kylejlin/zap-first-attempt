@@ -235,7 +235,14 @@ class Zap extends React.Component {
                   })}
                 </div>
               );
-            })
+            }).concat([
+              <li
+                className="Zap-AddButton"
+                onClick={() => this.openAddComponentMenu()}
+              >
+                Add component
+              </li>
+            ])
             : ((this.state.inspected && this.state.inspected.isSystem)
               ? (
                 <div className="Zap-InspectorSystem">
@@ -468,6 +475,11 @@ class Zap extends React.Component {
     this.setState({
       runStatus: 'RUNNING',
     });
+  }
+
+  openAddComponentMenu = () => {
+    const entity = this.state.inspected;
+    // TODO
   }
 }
 

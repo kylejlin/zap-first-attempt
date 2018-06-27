@@ -163,12 +163,16 @@
   background-color: var(--add-button-color);
   border-radius: 0.25vw;
   padding: 0.5vw;
+  color: var(--text-color);
+  display: inline-block;;
 }
 
 .Zap-EditButton {
   background-color: var(--edit-button-color);
   border-radius: 0.25vw;
   padding: 0.5vw;
+  color: var(--text-color);
+  display: inline-block;;
 }
 
 .Zap-InspectorSystem {
@@ -177,6 +181,5 @@
 }
 
 .Zap-InspectorSystem .Zap-EditButton {
-  display: inline-block;
   margin-top: 2.5vw;
 }
