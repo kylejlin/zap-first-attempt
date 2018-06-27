@@ -6,6 +6,7 @@
   --should-not-be-seen: #FF0000;
   --button-icon-color: #0088BB;
   --new-button-color: #008800;
+  --edit-button-color: #0088CC;
 }
 
 .Zap h2, .Zap h3 {
@@ -162,4 +163,20 @@
   background-color: var(--new-button-color);
   border-radius: 0.25vw;
   padding: 0.5vw;
+}
+
+.Zap-EditButton {
+  background-color: var(--edit-button-color);
+  border-radius: 0.25vw;
+  padding: 0.5vw;
+}
+
+.Zap-InspectorSystem {
+  margin: 2.5vw;
+  color: var(--text-color);
+}
+
+.Zap-InspectorSystem .Zap-EditButton {
+  display: inline-block;
+  margin-top: 2.5vw;
 }

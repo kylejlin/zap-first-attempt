@@ -3,9 +3,11 @@ import './Zap.css';
 import * as THREE from 'three';
 import * as components from './components';
 import Entity from './ecs/Entity';
+import System from './ecs/System';
 
 import getInitScene from './getInitScene';
 import getRenderSystem from './getRenderSystem';
+import compileSystem from './compileSystem';
 
 import newSystemInitialCode from './newSystemInitialCode';
 
@@ -16,6 +18,8 @@ const WINDOW_PADDING = 1.5;
 const DIVIDER_HEIGHT = 2;
 const COMMAND_BAR_HEIGHT = 10;
 
+const NOOP = () => undefined;
+
 class Zap extends React.Component {
   constructor(props) {
     super(props);
@@ -24,6 +28,8 @@ class Zap extends React.Component {
       initSceneBackup: null,
       currentScene: getInitScene(),
       runStatus: 'STOPPED',
+      systemSrcDict: {},
+
       inspected: null,
 
       canvasHierarchyDividerLeft: 50,
@@ -79,21 +85,9 @@ class Zap extends React.Component {
             className="Zap-CommandButton"
             onClick={() => {
               if (this.state.runStatus === 'RUNNING' || this.state.runStatus === 'PAUSED') {
-                this.state.currentScene.restoreWithBackup(this.state.initSceneBackup);
-                this.resizeCanvases();
-                this.setState((prevState) => {
-                  return {
-                    runStatus: 'STOPPED',
-                    initSceneBackup: null,
-                  };
-                });
+                this.stop();
               } else {
-                this.setState((prevState) => {
-                  return {
-                    runStatus: 'RUNNING',
-                    initSceneBackup: prevState.currentScene.getBackup(),
-                  };
-                });
+                this.play();
               }
             }}
           >
@@ -207,12 +201,18 @@ class Zap extends React.Component {
             <ul >
               {this.state.currentScene.systems.map((system) => {
                 return (
-                  <li>{system.name}</li>
+                  <li
+                    onClick={() => {
+                      this.setState({ inspected: system });
+                    }}
+                  >
+                    {system.name}
+                  </li>
                 );
               })}
               <li
                 className="Zap-NewButton"
-                onClick={() => this.openTextEditor()}
+                onClick={() => this.newSystem()}
               >
                 New system
               </li>
@@ -257,7 +257,22 @@ class Zap extends React.Component {
                 </div>
               );
             })
-            : null
+            : (this.state.inspected instanceof System
+              ? (
+                <div className="Zap-InspectorSystem">
+                  <div className="Zap-SystemName">
+                    {this.state.inspected.name}
+                  </div>
+                  <div
+                    className="Zap-EditButton"
+                    onClick={() => this.editSystem(this.state.inspected.name)}
+                  >
+                    Edit system
+                  </div>
+                </div>
+              )
+              : null
+            )
           }
         </div>
       </div>
@@ -376,7 +391,50 @@ class Zap extends React.Component {
     renderSystem.update(scene, renderSystemIndexes);
   }
 
-  openTextEditor() {
+  newSystem() {
+    const newSystem = new System(
+      'MyAwesomeSystem',
+      NOOP,
+      []
+    );
+    this.state.currentScene.addSystem(newSystem);
+    this.setState((prevState) => {
+      return {
+        systemSrcDict: {
+          ...prevState.systemSrcDict,
+          MyAwesomeSystem: newSystemInitialCode,
+        },
+      };
+    });
+
+    // const editorWindow = window.open('/#editor');
+    // window.addEventListener('message', (event) => {
+    //   const message = event.data;
+    //   if (message.type === 'READY') {
+    //     editorWindow.postMessage(
+    //       {
+    //         type: 'SET_INITIAL_CODE',
+    //         code: newSystemInitialCode,
+    //       },
+    //       '*'
+    //     );
+    //   } else if (message.type === 'CODE_UPDATE') {
+    //     this.setState((prevState) => {
+    //       return {
+    //         systemSrcDict: {
+    //           ...prevState.systemSrcDict,
+    //           myAwesomeSystem: message.code,
+    //         },
+    //       };
+    //     });
+    //   }
+    // });
+    // window.addEventListener('beforeunload', () => {
+    //   editorWindow.close();
+    // });
+  }
+
+  editSystem(systemName) {
     const editorWindow = window.open('/#editor');
     window.addEventListener('message', (event) => {
       const message = event.data;
@@ -384,15 +442,64 @@ class Zap extends React.Component {
         editorWindow.postMessage(
           {
             type: 'SET_INITIAL_CODE',
-            code: newSystemInitialCode,
+            code: this.state.systemSrcDict[systemName],
           },
           '*'
         );
+      } else if (message.type === 'CODE_UPDATE') {
+        this.setState((prevState) => {
+          return {
+            systemSrcDict: {
+              ...prevState.systemSrcDict,
+              [systemName]: message.code,
+            },
+          };
+        });
       }
     });
     window.addEventListener('beforeunload', () => {
       editorWindow.close();
     });
+  }
+
+  play() {
+    this.compileSystemSrcs();
+    this.setState((prevState) => {
+      return {
+        runStatus: 'RUNNING',
+        initSceneBackup: prevState.currentScene.getBackup(),
+      };
+    });
+  }
+
+  stop() {
+    this.state.currentScene.restoreWithBackup(this.state.initSceneBackup);
+    this.resizeCanvases();
+    this.setState((prevState) => {
+      return {
+        runStatus: 'STOPPED',
+        initSceneBackup: null,
+      };
+    });
+  }
+
+  compileSystemSrcs() {
+    const systemNames = Object.keys(this.state.systemSrcDict);
+    const { currentScene } = this.state;
+    for (const systemName of systemNames) {
+      const system = currentScene.systems.find(s => s.name === systemName)
+        || (() => {
+          throw new TypeError('state.systemSrcDict entry does not have corresponding registered system.');
+        })();
+      currentScene.removeSystem(system);
+    }
+    for (const systemName of systemNames) {
+      const systemSrc = this.state.systemSrcDict[systemName];
+      const system = compileSystem(systemSrc);
+      if (system !== null) {
+        currentScene.addSystem(system);
+      }
+    }
   }
 }
 

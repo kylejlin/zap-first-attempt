@@ -19,7 +19,7 @@ class TextEditor extends React.Component {
         mode="javascript"
         theme="xcode"
         value={this.state.code}
-        onChange={(todo) => this.onChange(todo)}
+        onChange={(newCode) => this.onCodeChange(newCode)}
         name="ZapTextEditor-Ace"
         width="100vw"
         height="100vh"
@@ -46,8 +46,14 @@ class TextEditor extends React.Component {
     );
   }
 
-  onChange() {
-
+  onCodeChange(newCode) {
+    window.opener.postMessage(
+      {
+        type: 'CODE_UPDATE',
+        code: newCode,
+      },
+      '*'
+    );
   }
 }
 
