@@ -29,6 +29,7 @@ class Zap extends React.Component {
       currentScene: getInitScene(),
       runStatus: 'STOPPED',
       systemSrcDict: {},
+      systemWindowDict: {},
 
       inspected: null,
 
@@ -406,36 +407,24 @@ class Zap extends React.Component {
         },
       };
     });
-
-    // const editorWindow = window.open('/#editor');
-    // window.addEventListener('message', (event) => {
-    //   const message = event.data;
-    //   if (message.type === 'READY') {
-    //     editorWindow.postMessage(
-    //       {
-    //         type: 'SET_INITIAL_CODE',
-    //         code: newSystemInitialCode,
-    //       },
-    //       '*'
-    //     );
-    //   } else if (message.type === 'CODE_UPDATE') {
-    //     this.setState((prevState) => {
-    //       return {
-    //         systemSrcDict: {
-    //           ...prevState.systemSrcDict,
-    //           myAwesomeSystem: message.code,
-    //         },
-    //       };
-    //     });
-    //   }
-    // });
-    // window.addEventListener('beforeunload', () => {
-    //   editorWindow.close();
-    // });
   }
 
   editSystem(systemName) {
+    const existingEditorWindow = this.state.systemWindowDict[systemName];
+    if (existingEditorWindow && !existingEditorWindow.closed) {
+      existingEditorWindow.focus();
+      return;
+    }
+
     const editorWindow = window.open('/#editor');
+    this.setState((prevState) => {
+      return {
+        systemWindowDict: {
+          ...prevState.systemWindowDict,
+          [systemName]: editorWindow,
+        },
+      };
+    });
     window.addEventListener('message', (event) => {
       const message = event.data;
       if (message.type === 'READY') {
