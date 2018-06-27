@@ -1,5 +1,6 @@
 import { transform } from '@babel/standalone';
 import System from './ecs/System';
+import IndexSpec from './ecs/IndexSpec';
 
 const compileSystem = (src) => {
   const transformed = transform(
@@ -21,6 +22,7 @@ const compileSystem = (src) => {
   const requireOverride = () => {
     return {
       System,
+      IndexSpec,
     };
   };
   const exportsOverride = {};

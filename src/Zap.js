@@ -488,11 +488,10 @@ class Zap extends React.Component {
     const systemNames = Object.keys(systemSrcDict);
 
     for (const systemName of systemNames) {
-      const system = currentScene.systems.find(s => s.name === systemName)
-        || (() => {
-          throw new TypeError('state.systemSrcDict entry does not have corresponding registered system.');
-        })();
-      currentScene.removeSystem(system);
+      const system = currentScene.systems.find(s => s.name === systemName);
+      if (system) {
+        currentScene.removeSystem(system);
+      }
     }
     for (const systemName of systemNames) {
       const systemSrc = systemSrcDict[systemName];
