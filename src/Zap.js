@@ -10,6 +10,9 @@ import compileSystem from './compileSystem';
 
 import newSystemInitialCode from './newSystemInitialCode';
 
+import PlayButton from './PlayButton';
+import PauseButton from './PauseButton';
+
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
 const WINDOW_PADDING = 1.5;
@@ -80,40 +83,17 @@ class Zap extends React.Component {
             width: this.state.canvasHierarchyDividerLeft + 'vw'
           }}
         >
-          <button
-            className="Zap-CommandButton"
-            onClick={() => {
-              if (this.state.runStatus === 'RUNNING' || this.state.runStatus === 'PAUSED') {
-                this.stop();
-              } else {
-                this.play();
-              }
-            }}
-          >
-            {this.state.runStatus !== 'STOPPED'
-              ? <div className="Zap-IconStop" />
-              : <div className="Zap-IconPlay" />
-            }
-          </button>
-          <button
-            className={'Zap-CommandButton' + (this.state.runStatus !== 'STOPPED' ? '' : ' Zap-DisabledButton')}
-            onClick={() => {
-              if (this.state.runStatus === 'RUNNING') {
-                this.setState({
-                  runStatus: 'PAUSED',
-                });
-              } else if (this.state.runStatus === 'PAUSED') {
-                this.setState({
-                  runStatus: 'RUNNING',
-                });
-              }
-            }}
-          >
-            {this.state.runStatus === 'PAUSED'
-              ? <div className="Zap-IconPlay" />
-              : <div className="Zap-IconPause" />
-            }
-          </button>
+          <PlayButton
+            isInPlayMode={this.state.runStatus !== 'STOPPED'}
+            play={this.play}
+            stop={this.stop}
+          />
+          <PauseButton
+            isInPlayMode={this.state.runStatus !== 'STOPPED'}
+            isPaused={this.state.runStatus === 'PAUSED'}
+            pause={this.pause}
+            resume={this.resume}
+          />
         </div>
 
         <div
@@ -475,6 +455,18 @@ class Zap extends React.Component {
     }, () => {
       // In case the windows were resized in play mode.
       this.resizeRenderers();
+    });
+  }
+
+  pause = () => {
+    this.setState({
+      runStatus: 'PAUSED',
+    });
+  }
+
+  resume = () => {
+    this.setState({
+      runStatus: 'RUNNING',
     });
   }
 }
