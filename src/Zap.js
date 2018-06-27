@@ -13,6 +13,7 @@ import newSystemInitialCode from './newSystemInitialCode';
 import PlayButton from './PlayButton';
 import PauseButton from './PauseButton';
 import InspectorWindow from './InspectorWindow';
+import HierarchyWindow from './HierarchyWindow';
 
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
@@ -144,63 +145,16 @@ class Zap extends React.Component {
           onMouseUp={() => this.setState({ isCanvasHierarchyDividerBeingDragged: false })}
         />
 
-        <div
-          className="Zap-HierarchyWindow"
-          style={{
-            left: DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw',
-            width: this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw',
-          }}
-        >
-          <h2 onClick={() => this.openTextEditor()}>Hierarchy</h2>
-          <div className="Zap-HierarchyEntities">
-            <h3>Entities</h3>
-            <ul>
-              {this.state.currentScene.entities.map((entity) => {
-                const nameComp = entity.InspectorName;
-                const name = nameComp ? nameComp.inspectorName : 'Unnamed Entity';
-                return (
-                  <li
-                    onClick={() => this.setState((prevState) => {
-                      return {
-                        inspected: prevState.inspected === entity
-                          ? null
-                          : entity,
-                      };
-                    })}
-                    className={entity === this.state.inspected ? 'Zap-HierarchySelectedEntity' : ''}
-                  >
-                    {name}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          <div className="Zap-HierarchySystems">
-            <h3>Systems</h3>
-            <ul >
-              {this.state.currentScene.systems.map((system) => {
-                return (
-                  <li
-                    onClick={() => {
-                      this.setState({ inspected: system });
-                    }}
-                  >
-                    {system.name}
-                  </li>
-                );
-              })}
-              <li>
-                <button
-                  className="Zap-Button Zap-AddButton"
-                  onClick={() => this.addSystem()}
-                >
-                  Add system
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <HierarchyWindow
+          left={DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw'}
+          width={this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
+          entities={this.state.currentScene.entities}
+          systems={this.state.currentScene.systems}
+          inspected={this.state.inspected}
+          toggleEntitySelection={this.toggleEntitySelection}
+          toggleSystemSelection={this.toggleSystemSelection}
+          addSystem={this.addSystem}
+        />
 
         <div
           className="Zap-HierarchyInspector-Divider"
@@ -437,6 +391,26 @@ class Zap extends React.Component {
   openAddComponentMenu = () => {
     const entity = this.state.inspected;
     // TODO
+  }
+
+  toggleEntitySelection = (entity) => {
+    this.setState((prevState) => {
+      return {
+        inspected: prevState.inspected === entity
+          ? null
+          : entity,
+      };
+    });
+  }
+
+  toggleSystemSelection = (system) => {
+    this.setState((prevState) => {
+      return {
+        inspected: prevState.inspected === system
+          ? null
+          : system,
+      };
+    });
   }
 }
 
