@@ -2,8 +2,7 @@ import React from 'react';
 import './Zap.css';
 import * as THREE from 'three';
 import * as components from './components';
-import Entity from './ecs/Entity';
-import System from './ecs/System';
+import VirtualSystem from './ecs/VirtualSystem';
 
 import getInitScene from './getInitScene';
 import getRenderSystem from './getRenderSystem';
@@ -28,7 +27,6 @@ class Zap extends React.Component {
       initSceneBackup: null,
       currentScene: getInitScene(),
       runStatus: 'STOPPED',
-      systemSrcDict: {},
       systemWindowDict: {},
 
       inspected: null,
@@ -55,7 +53,7 @@ class Zap extends React.Component {
           this.setState({
             canvasHierarchyDividerLeft: Math.min(leftVw, this.state.hierarchyInspectorDividerLeft),
           }, () => {
-            this.resizeCanvases();
+            this.resizeRenderers();
           });
         }
         if (this.state.isHierarchyInspectorDividerBeingDragged) {
@@ -71,7 +69,7 @@ class Zap extends React.Component {
           this.setState({
             previewPlayDividerTop: topVh,
           }, () => {
-            this.resizeCanvases();
+            this.resizeRenderers();
           });
         }
       }}
@@ -238,7 +236,7 @@ class Zap extends React.Component {
           }}
         >
           <h2>Inspector</h2>
-          {this.state.inspected instanceof Entity
+          {(this.state.inspected && this.state.inspected.isEntity)
             ? Object.keys(this.state.inspected).filter((componentName) => {
               const component = this.state.inspected[componentName];
               return 'scene' !== componentName && component !== null;
@@ -246,7 +244,7 @@ class Zap extends React.Component {
               return (
                 <div className="Zap-InspectorComponent">
                   <h3>{componentName}</h3>
-                  {Object.keys(this.state.inspected[componentName]).map((propertyName) => {
+                  {Object.keys(this.state.inspected[componentName]).filter(n => n !== 'name').map((propertyName) => {
                     const stringifiedValue = JSON.stringify(this.state.inspected[componentName][propertyName], null, 4);
                     return (
                       <div className="Zap-InspectorComponentProperty">
@@ -258,7 +256,7 @@ class Zap extends React.Component {
                 </div>
               );
             })
-            : (this.state.inspected instanceof System
+            : ((this.state.inspected && this.state.inspected.isSystem)
               ? (
                 <div className="Zap-InspectorSystem">
                   <div className="Zap-SystemName">
@@ -296,32 +294,28 @@ class Zap extends React.Component {
       playThreeScene,
       playThreeRenderer,
     }, () => {
-      this.resizeCanvases();
-      const renderSystem = getRenderSystem(this);
-      this.state.currentScene.addSystem(renderSystem);
+      this.resizeRenderers();
       this.startLoop();
     });
 
     window.addEventListener('resize', () => {
-      this.resizeCanvases();
+      this.resizeRenderers();
     });
   }
 
   startLoop() {
     let then = performance.now();
-    const render = () => {
-      requestAnimationFrame(render);
+    const gameLoop = () => {
+      requestAnimationFrame(gameLoop);
       const now = performance.now();
       if (this.state.runStatus === 'RUNNING') {
         const dt = now - then;
         this.state.currentScene.globals.deltaTime = dt;
         this.state.currentScene.update();
-      } else {
-        this.manuallyRender();
       }
       then = now;
     };
-    render();
+    gameLoop();
   }
 
   getPreviewCanvasDimensions() {
@@ -346,7 +340,7 @@ class Zap extends React.Component {
     };
   }
 
-  resizeCanvases() {
+  resizeRenderers() {
     const { previewThreeRenderer, playThreeRenderer } = this.state;
 
     const {
@@ -370,12 +364,24 @@ class Zap extends React.Component {
     playCameraComps.forEach((cameraComp) => {
       cameraComp.value.aspectRatio = playCanvasAspectRatio;
     });
+
+    if (this.state.runStatus !== 'RUNNING') {
+      this.manuallyRender();
+    }
   }
 
   manuallyRender() {
-    const renderSystem = getRenderSystem(this);
+    const scene = (() => {
+      if (this.state.runStatus === 'STOPPED') {
+        const scene = this.state.currentScene.intoScene();
+        scene.addSystem(getRenderSystem(this));
+        return scene;
+      } else {
+        return this.state.currentScene;
+      }
+    })();
+    const renderSystem = scene.systems.find(s => s.name === 'Render');
     const renderSystemIndexes = [];
-    const scene = this.state.currentScene;
     for (const spec of renderSystem.indexSpecs) {
       let hasFoundIndex = false;
       for (const index of scene.indexes) {
@@ -393,10 +399,9 @@ class Zap extends React.Component {
   }
 
   newSystem() {
-    const newSystem = new System(
+    const newSystem = new VirtualSystem(
       'MyAwesomeSystem',
-      NOOP,
-      []
+      newSystemInitialCode
     );
     this.state.currentScene.addSystem(newSystem);
     this.setState((prevState) => {
@@ -431,19 +436,16 @@ class Zap extends React.Component {
         editorWindow.postMessage(
           {
             type: 'SET_INITIAL_CODE',
-            code: this.state.systemSrcDict[systemName],
+            code: newSystemInitialCode,
           },
           '*'
         );
       } else if (message.type === 'CODE_UPDATE') {
-        this.setState((prevState) => {
-          return {
-            systemSrcDict: {
-              ...prevState.systemSrcDict,
-              [systemName]: message.code,
-            },
-          };
-        });
+        const virtualSystem = this.state.currentScene.systems.find(v => v.name === systemName);
+        if (!virtualSystem) {
+          throw new Error('Virtual system not found.');
+        }
+        virtualSystem.src = message.code;
       }
     });
     window.addEventListener('beforeunload', () => {
@@ -452,47 +454,28 @@ class Zap extends React.Component {
   }
 
   play() {
-    this.compileSystemSrcs();
     this.setState((prevState) => {
+      const liveScene = prevState.currentScene.intoScene();
+      liveScene.addSystem(getRenderSystem(this));
       return {
         runStatus: 'RUNNING',
-        initSceneBackup: prevState.currentScene.getBackup(),
+        initSceneBackup: prevState.currentScene,
+        currentScene: liveScene,
       };
     });
   }
 
   stop() {
-    this.state.currentScene.restoreWithBackup(this.state.initSceneBackup);
-    this.resizeCanvases();
     this.setState((prevState) => {
       return {
         runStatus: 'STOPPED',
         initSceneBackup: null,
+        currentScene: prevState.initSceneBackup,
       };
+    }, () => {
+      // In case the windows were resized in play mode.
+      this.resizeRenderers();
     });
-  }
-
-  compileSystemSrcs() {
-    const { currentScene, systemSrcDict } = this.state;
-    const systemNames = Object.keys(systemSrcDict);
-
-    for (const systemName of systemNames) {
-      const system = currentScene.systems.find(s => s.name === systemName);
-      if (system) {
-        currentScene.removeSystem(system);
-      }
-    }
-    for (const systemName of systemNames) {
-      const systemSrc = systemSrcDict[systemName];
-      const system = compileSystem(systemSrc);
-      if (system !== null) {
-        if (system.name !== systemName) {
-          delete systemSrcDict[systemName];
-          systemSrcDict[system.name] = systemSrc;
-        }
-        currentScene.addSystem(system);
-      }
-    }
   }
 }
 

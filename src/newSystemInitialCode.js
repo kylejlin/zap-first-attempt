@@ -1,8 +1,8 @@
-export default `import { System } from '@zapkit/ecs';
+export default `import { System, IndexSpec } from '@zapkit/ecs';
 
 const mySystem = new System(
-  'MySystemName',
-  (scene, []) => {
+  'MyAwesomeSystem',
+  (scene, indexes) => {
 
   },
   [

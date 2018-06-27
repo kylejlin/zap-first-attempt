@@ -1,6 +1,12 @@
 class Entity {
   constructor() {
     this.scene = null;
+    Object.defineProperties(this, {
+      isEntity: {
+        value: true,
+        enumerable: false,
+      },
+    });
   }
 
   addComponent(component) {

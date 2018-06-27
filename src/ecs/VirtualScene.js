@@ -45,6 +45,9 @@ class VirtualScene {
       }
       for (const componentName in virtualEntity) {
         const component = virtualEntity[componentName];
+        if (component === null || component === undefined) {
+          continue;
+        }
         if (component.isDerived) {
           const { providerName, name } = component;
           const rawComponent = derivedComponents[providerName][name];
@@ -68,4 +71,4 @@ class VirtualScene {
   }
 }
 
-export default Scene;
+export default VirtualScene;

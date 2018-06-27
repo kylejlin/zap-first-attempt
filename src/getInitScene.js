@@ -1,15 +1,15 @@
-import Scene from './ecs/Scene';
-import Entity from './ecs/Entity';
+import VirtualScene from './ecs/VirtualScene';
+import VirtualEntity from './ecs/VirtualEntity';
 import * as components from './components';
 import * as THREE from 'three';
 
 import getKeyDictGlobal from './getKeyDictGlobal';
 
 const getInitScene = () => {
-  const scene = new Scene();
+  const scene = new VirtualScene();
   scene.globals.keyDict = getKeyDictGlobal();
 
-  const playerCameraEnt = new Entity();
+  const playerCameraEnt = new VirtualEntity();
   playerCameraEnt.addComponent(
     components.InspectorName('Player Camera')
   );
@@ -33,7 +33,7 @@ const getInitScene = () => {
   );
   scene.addEntity(playerCameraEnt);
 
-  const debugCameraEnt = new Entity();
+  const debugCameraEnt = new VirtualEntity();
   debugCameraEnt.addComponent(
     components.InspectorName('Debug Camera')
   );
@@ -57,7 +57,7 @@ const getInitScene = () => {
   );
   scene.addEntity(debugCameraEnt);
 
-  const cubeEnt = new Entity();
+  const cubeEnt = new VirtualEntity();
   const threeGeo = new THREE.BoxGeometry(3, 3, 3);
   cubeEnt.addComponent(
     components.InspectorName('Orange Cube')

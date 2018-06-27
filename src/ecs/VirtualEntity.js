@@ -1,6 +1,15 @@
 class VirtualEntity {
   constructor() {
-    this.componentProviders = {};
+    Object.defineProperties(this, {
+      componentProviders: {
+        value: {},
+        enumerable: false,
+      },
+      isEntity: {
+        value: true,
+        enumerable: false,
+      },
+    });
   }
 
   addComponent(component) {
