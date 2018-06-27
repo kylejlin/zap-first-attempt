@@ -12,8 +12,7 @@ import newSystemInitialCode from './newSystemInitialCode';
 
 import PlayButton from './PlayButton';
 import PauseButton from './PauseButton';
-import VirtualEntityInspector from './VirtualEntityInspector';
-import VirtualSystemInspector from './VirtualSystemInspector';
+import InspectorWindow from './InspectorWindow';
 
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
@@ -212,42 +211,13 @@ class Zap extends React.Component {
           onMouseUp={() => this.setState({ isHierarchyInspectorDividerBeingDragged: false })}
         />
 
-        <div
-          className="Zap-InspectorWindow"
-          style={{
-            left: DIVIDER_WIDTH + this.state.hierarchyInspectorDividerLeft + 'vw',
-            width: 100 - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'
-          }}
-        >
-          <h2>Inspector</h2>
-          {(() => {
-            if (this.state.inspected === null) {
-              return null;
-            }
-            if (this.state.inspected.isEntity) {
-              if (this.state.inspected.isVirtual) {
-                return (
-                  <VirtualEntityInspector
-                    virtualEntity={this.state.inspected}
-                    openAddComponentMenu={this.openAddComponentMenu}
-                  />
-                );
-              }
-              return null; // TODO EntityInspector
-            }
-            if (this.state.inspected.isSystem) {
-              if (this.state.inspected.isVirtual) {
-                return (
-                  <VirtualSystemInspector
-                    systemName={this.state.inspected.name}
-                    editSystem={this.editSystem}
-                  />
-                );
-              }
-              return null; // TODO SystemInspector
-            }
-          })()}
-        </div>
+        <InspectorWindow
+          left={DIVIDER_WIDTH + this.state.hierarchyInspectorDividerLeft + 'vw'}
+          width={100 - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
+          inspected={this.state.inspected}
+          openAddComponentMenu={this.openAddComponentMenu}
+          editSystem={this.editSystem}
+        />
       </div>
     );
   }
