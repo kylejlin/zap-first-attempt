@@ -484,8 +484,9 @@ class Zap extends React.Component {
   }
 
   compileSystemSrcs() {
-    const systemNames = Object.keys(this.state.systemSrcDict);
-    const { currentScene } = this.state;
+    const { currentScene, systemSrcDict } = this.state;
+    const systemNames = Object.keys(systemSrcDict);
+
     for (const systemName of systemNames) {
       const system = currentScene.systems.find(s => s.name === systemName)
         || (() => {
@@ -494,9 +495,13 @@ class Zap extends React.Component {
       currentScene.removeSystem(system);
     }
     for (const systemName of systemNames) {
-      const systemSrc = this.state.systemSrcDict[systemName];
+      const systemSrc = systemSrcDict[systemName];
       const system = compileSystem(systemSrc);
       if (system !== null) {
+        if (system.name !== systemName) {
+          delete systemSrcDict[systemName];
+          systemSrcDict[system.name] = systemSrc;
+        }
         currentScene.addSystem(system);
       }
     }
