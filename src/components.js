@@ -1,95 +1,60 @@
-//! unused
+export const Position = (x, y, z) => ({
+  name: 'Position',
+  x,
+  y,
+  z,
+});
 
-export class Gravity {
-  constructor(direction, magnitude) {
-    // @type UnitVector
-    this.direction = direction;
-    // @type Float
-    this.magnitude = magnitude;
-  }
-}
+export const Rotation = (x, y, z, order) => ({
+  name: 'Rotation',
+  x,
+  y,
+  z,
+  order,
+});
 
-export class Position {
-  constructor(x, y, z) {
-    // @type Float
-    this.x = x;
-    this.y = y;
-    this.z = z;
-  }
-}
+export const Scale = (x, y, z) => ({
+  name: 'Scale',
+  x,
+  y,
+  z,
+});
 
-export class Rotation {
-  constructor(x, y, z, order) {
-    // @type Float
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    // @type String
-    this.order = order;
-  }
-}
+export const Geometry = (vertices, faces) => ({
+  name: 'Geometry',
+  vertices,
+  faces,
+});
 
-export class Scale {
-  constructor(x, y, z) {
-    // @type Float
-    this.x = x;
-    this.y = y;
-    this.z = z;
-  }
-}
+export const MaterialEnum = (which, value) => ({
+  name: 'MaterialEnum',
+  which,
+  value,
+});
+MaterialEnum.Which = {
+  // { color: Int }
+  StandardColor: 'StandardColor',
+};
 
-export class Velocity {
-  constructor(x, y, z) {
-    // @type Float
-    this.x = x;
-    this.y = y;
-    this.z = z;
-  }
-}
+export const CameraEnum = (which, value) => ({
+  name: 'CameraEnum',
+  which,
+  value,
+});
+CameraEnum.Which = {
+  // { fov: Float, aspect: Float, near: Float, far: Float }
+  Perspective: 'Perspective',
+};
 
-export class Geometry {
-  constructor(vertices, faces) {
-    this.vertices = vertices;
-    this.faces = faces;
-  }
-}
+export const IsMainPlayerCamera = () => ({
+  name: 'IsMainPlayerCamera',
+});
 
-export class MaterialEnum {
-  static Which = {
-    // { color: Int }
-    StandardColor: 'StandardColor',
-  }
+export const IsMainDebugCamera = () => ({
+  name: 'IsMainDebugCamera',
+});
 
-  constructor(which, value) {
-    this.which = which;
-    this.value = value;
-  }
-}
-
-export class CameraEnum {
-  static Which = {
-    // { fov: Float, aspect: Float, near: Float, far: Float }
-    Perspective: 'Perspective',
-  }
-
-  constructor(which, value) {
-    this.which = which;
-    this.value = value;
-  }
-}
-
-// tag
-export class IsMainPlayerCamera {
-
-}
-
-// tag
-export class IsMainDebugCamera {
-
-}
-
-export class Name {
-  constructor(name) {
-    this.name = name;
-  }
-}
+export const InspectorName = (inspectorName) => ({
+  name: 'InspectorName',
+  inspectorName,
+});

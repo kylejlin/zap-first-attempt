@@ -104,17 +104,12 @@ class Scene {
     const cloneEntity = (entity) => {
       const clone = new Entity();
       clone.scene = this;
-      for (const key in entity) {
-        if (key === 'scene') {
+      for (const componentName in entity) {
+        if ('scene' === componentName) {
           continue;
         }
-        const value = entity[key];
-        const cloneValue = JSON.parse(JSON.stringify(value));
-        Object.defineProperty(cloneValue, 'constructor', {
-          value: value.constructor,
-          enumerable: false,
-        });
-        clone[key] = cloneValue;
+        const component = entity[componentName];
+        clone[componentName] = JSON.parse(JSON.stringify(component));
       }
       return clone;
     };

@@ -176,8 +176,8 @@ class Zap extends React.Component {
             <h3>Entities</h3>
             <ul>
               {this.state.currentScene.entities.map((entity) => {
-                const nameComp = entity.Name;
-                const name = nameComp ? nameComp.name : 'Unnamed Entity';
+                const nameComp = entity.InspectorName;
+                const name = nameComp ? nameComp.inspectorName : 'Unnamed Entity';
                 return (
                   <li
                     onClick={() => this.setState((prevState) => {

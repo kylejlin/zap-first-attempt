@@ -4,7 +4,7 @@ class Entity {
   }
 
   addComponent(component) {
-    this[component.constructor.name] = component;
+    this[component.name] = component;
 
     const { scene } = this;
     if (scene) {
@@ -15,7 +15,7 @@ class Entity {
 
         let hasAll = true;
         for (const requirement of index.requirements) {
-          const component = this[requirement.name];
+          const component = this[requirement];
           if (component === null || component === undefined) {
             hasAll = false;
             break;
@@ -29,7 +29,7 @@ class Entity {
   }
 
   removeComponent(component) {
-    this[component.constructor.name] = null;
+    this[component.name] = null;
 
     const { scene } = this;
     if (scene) {
@@ -41,7 +41,7 @@ class Entity {
 
         let hasAll = true;
         for (const requirement of index.requirements) {
-          const component = this[requirement.name];
+          const component = this[requirement];
           if (component === null || component === undefined) {
             hasAll = false;
             break;
