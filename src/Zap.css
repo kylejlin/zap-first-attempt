@@ -5,7 +5,7 @@
   --text-color: #EEEEEE;
   --should-not-be-seen: #FF0000;
   --button-icon-color: #0088BB;
-  --new-button-color: #008800;
+  --add-button-color: #008800;
   --edit-button-color: #0088CC;
 }
 
@@ -159,8 +159,8 @@
   font-size: 1vw;
 }
 
-.Zap-NewButton {
-  background-color: var(--new-button-color);
+.Zap-AddButton {
+  background-color: var(--add-button-color);
   border-radius: 0.25vw;
   padding: 0.5vw;
 }

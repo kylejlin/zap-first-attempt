@@ -190,10 +190,10 @@ class Zap extends React.Component {
                 );
               })}
               <li
-                className="Zap-NewButton"
-                onClick={() => this.newSystem()}
+                className="Zap-AddButton"
+                onClick={() => this.addSystem()}
               >
-                New system
+                Add system
               </li>
             </ul>
           </div>
@@ -378,7 +378,7 @@ class Zap extends React.Component {
     renderSystem.update(scene, renderSystemIndexes);
   }
 
-  newSystem = () => {
+  addSystem = () => {
     const newSystem = new VirtualSystem(
       'MyAwesomeSystem',
       newSystemInitialCode
