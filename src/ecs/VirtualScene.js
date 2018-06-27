@@ -35,6 +35,18 @@ class VirtualScene {
   }
 
   intoScene() {
+    const scene = this.intoSceneWithoutSystems();
+    for (const virtualSystem of this.systems) {
+      const system = compileSystem(virtualSystem.src);
+      if (system === null) {
+        throw new SyntaxError('Could not compile virtual system.');
+      }
+      scene.addSystem(system);
+    }
+    return scene;
+  }
+
+  intoSceneWithoutSystems() {
     const scene = new Scene();
     for (const virtualEntity of this.entities) {
       const entity = new Entity();
@@ -59,13 +71,6 @@ class VirtualScene {
         }
       }
       scene.addEntity(entity);
-    }
-    for (const virtualSystem of this.systems) {
-      const system = compileSystem(virtualSystem.src);
-      if (system === null) {
-        throw new SyntaxError('Could not compile virtual system.');
-      }
-      scene.addSystem(system);
     }
     return scene;
   }
