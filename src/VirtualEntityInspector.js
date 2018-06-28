@@ -1,9 +1,16 @@
 import React from 'react';
 
+import sortBySimilarityToQuery from './sortBySimilarityToQuery';
+
 const VirtualEntityInspector = ({
   virtualEntity,
+  isAddComponentMenuOpen,
+  searchQuery,
+  componentCreators,
 
   openAddComponentMenu,
+  updateSearchQuery,
+  addComponent,
 }) => (
   <div className="Zap-EntityInspector">
     {
@@ -27,15 +34,34 @@ const VirtualEntityInspector = ({
         );
       })
     }
-    <button
-      className="Zap-Button Zap-AddButton"
-      onClick={openAddComponentMenu}
-    >
-      Add component
-    </button>
+    {isAddComponentMenuOpen
+      ? (
+        <div className="Zap-AddComponentMenu">
+          <input
+            type="text"
+            className="Zap-SearchInput"
+            placeholder="Search"
+            autoFocus={true}
+            value={searchQuery}
+            onChange={(e) => updateSearchQuery(e.target.value)}
+          />
+          <ul>
+            {sortBySimilarityToQuery(searchQuery, Object.values(componentCreators).map(c => c.name)).map((componentName) => (
+              <li onClick={() => addComponent(componentCreators[componentName]())}>{componentName}</li>
+            ))}
+          </ul>
+        </div>
+      )
+      : (
+        <button
+          className="Zap-Button Zap-AddButton"
+          onClick={openAddComponentMenu}
+        >
+          Add component
+        </button>
+      )
+    }
   </div>
 );
-
-
 
 export default VirtualEntityInspector;

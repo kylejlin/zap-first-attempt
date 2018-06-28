@@ -7,9 +7,14 @@ const InspectorWindow = ({
   left,
   width,
   inspected,
+  isAddComponentMenuOpen,
+  searchQuery,
+  componentCreators,
 
   openAddComponentMenu,
   editSystem,
+  updateSearchQuery,
+  addComponent,
 }) => (
   <div
     className="Zap-InspectorWindow"
@@ -28,7 +33,13 @@ const InspectorWindow = ({
           return (
             <VirtualEntityInspector
               virtualEntity={inspected}
+              isAddComponentMenuOpen={isAddComponentMenuOpen}
+              searchQuery={searchQuery}
+              componentCreators={componentCreators}
+
               openAddComponentMenu={openAddComponentMenu}
+              updateSearchQuery={updateSearchQuery}
+              addComponent={addComponent}
             />
           );
         }

@@ -35,6 +35,9 @@ class Zap extends React.Component {
 
       inspected: null,
 
+      isAddComponentMenuOpen: false,
+      searchQuery: '',
+
       canvasHierarchyDividerLeft: 50,
       hierarchyInspectorDividerLeft: 75,
       previewPlayDividerTop: 53,
@@ -134,9 +137,14 @@ class Zap extends React.Component {
           left={DIVIDER_WIDTH + this.state.hierarchyInspectorDividerLeft + 'vw'}
           width={100 - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
           inspected={this.state.inspected}
+          isAddComponentMenuOpen={this.state.isAddComponentMenuOpen}
+          searchQuery={this.state.searchQuery}
+          componentCreators={components}
 
           openAddComponentMenu={this.openAddComponentMenu}
           editSystem={this.editSystem}
+          updateSearchQuery={this.updateSearchQuery}
+          addComponent={this.addComponent}
         />
       </div>
     );
@@ -355,8 +363,9 @@ class Zap extends React.Component {
   }
 
   openAddComponentMenu = () => {
-    const entity = this.state.inspected;
-    // TODO
+    this.setState({
+      isAddComponentMenuOpen: true,
+    });
   }
 
   toggleEntitySelection = (entity) => {
@@ -365,6 +374,7 @@ class Zap extends React.Component {
         inspected: prevState.inspected === entity
           ? null
           : entity,
+        isAddComponentMenuOpen: false,
       };
     });
   }
@@ -375,6 +385,7 @@ class Zap extends React.Component {
         inspected: prevState.inspected === system
           ? null
           : system,
+        isAddComponentMenuOpen: false,
       };
     });
   }
@@ -405,6 +416,23 @@ class Zap extends React.Component {
         this.resizeRenderers();
       });
     }
+  }
+
+  updateSearchQuery = (searchQuery) => {
+    this.setState({
+      searchQuery,
+    });
+  }
+
+  addComponent = (component) => {
+    const entity = this.state.inspected;
+
+    if (!entity || !entity.isEntity) {
+      throw new TypeError('No entity selected.');
+    }
+
+    entity.addComponent(component);
+    this.forceUpdate();
   }
 }
 

@@ -1,5 +1,6 @@
 .Zap {
   --soft-black: #111111;
+  --soft-white: #EEEEEE;
   --dark-grey: #222222;
   --grey: #444444;
   --text-color: #EEEEEE;
@@ -7,6 +8,7 @@
   --button-icon-color: #0088BB;
   --add-button-color: #008800;
   --edit-button-color: #0088CC;
+  --menu-color: #111111;
 }
 
 .Zap h2, .Zap h3 {
@@ -188,4 +190,34 @@
 
 .Zap-EntityInspector .Zap-AddButton {
   margin: 2.5vw;
+}
+
+.Zap-AddComponentMenu {
+  margin: 2.5vw;
+  background: var(--menu-color);
+  color: var(--text-color);
+  border: 1px solid var(--soft-white);
+  display: inline-block;
+}
+
+.Zap-AddComponentMenu .Zap-SearchInput {
+  background-color: #000000;
+  color: var(--text-color);
+  outline: none;
+  border: 1px solid var(--grey);
+  padding: 1vw;
+  font-size: 1em;
+  display: block;
+}
+
+.Zap-AddComponentMenu ul {
+  margin: 0;
+  padding: 0;
+}
+
+.Zap-AddComponentMenu li {
+  list-style: none;
+  padding: 1vw;
+  padding-left: 2.5vw;
+  border: 1px solid var(--grey);
 }
