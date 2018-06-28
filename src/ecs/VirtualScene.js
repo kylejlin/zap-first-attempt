@@ -43,6 +43,7 @@ class VirtualScene {
         throw new SyntaxError('Could not compile virtual system.');
       }
       scene.addSystem(system);
+      virtualSystem.name = system.name;
     }
     return scene;
   }
