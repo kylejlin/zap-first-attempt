@@ -1,20 +1,25 @@
-.Zap-HierarchyWindow {
+.Zap-AssetWindow {
   background-color: var(--dark-grey);
   position: fixed;
-  top: 0;
   padding: 1.5vw;
   overflow: auto;
 }
 
-.Zap-HierarchySelectedEntity {
-  background-color: #0077AA;
-}
-
-.Zap-HierarchyEntities li, .Zap-HierarchySystems li {
+.Zap-AssetWindow li {
   list-style: none;
   margin: 0.5vw;
 }
 
+.Zap-Components, .Zap-ComponentProviders {
+  margin: 2.5vw;
+}
+
+/* .Zap-HierarchySelectedEntity {
+  background-color: #0077AA;
+}
+
+
+
 .Zap-HierarchyEntities, .Zap-HierarchySystems {
   padding: 2.5vw;
-}
+} */

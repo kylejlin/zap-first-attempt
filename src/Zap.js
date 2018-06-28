@@ -11,9 +11,10 @@ import compileSystem from './compileSystem';
 
 import newSystemInitialCode from './newSystemInitialCode';
 
+import CommandBar from './CommandBar';
 import InspectorWindow from './InspectorWindow';
 import HierarchyWindow from './HierarchyWindow';
-import CommandBar from './CommandBar';
+import AssetWindow from './AssetWindow';
 
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
@@ -40,11 +41,13 @@ class Zap extends React.Component {
       searchQuery: '',
 
       canvasHierarchyDividerLeft: 50,
+      hierarchyAssetsDividerTop: 75,
       hierarchyInspectorDividerLeft: 75,
       previewPlayDividerTop: 53,
       isCanvasHierarchyDividerBeingDragged: false,
+      isHierarchyAssetsDividerBeingDragged: false,
       isHierarchyInspectorDividerBeingDragged: false,
-      isPreviewPlayDividerTopBeingDragged: false,
+      isPreviewPlayDividerBeingDragged: false,
     };
     this.previewCanvasRef = React.createRef();
     this.playCanvasRef = React.createRef();
@@ -85,8 +88,8 @@ class Zap extends React.Component {
             top: this.state.previewPlayDividerTop + 'vh',
             width: this.state.canvasHierarchyDividerLeft + 'vw',
           }}
-          onMouseDown={() => this.setState({ isPreviewPlayDividerTopBeingDragged: true })}
-          onMouseUp={() => this.setState({ isPreviewPlayDividerTopBeingDragged: false })}
+          onMouseDown={() => this.setState({ isPreviewPlayDividerBeingDragged: true })}
+          onMouseUp={() => this.setState({ isPreviewPlayDividerBeingDragged: false })}
         />
 
         <div
@@ -116,6 +119,7 @@ class Zap extends React.Component {
         <HierarchyWindow
           left={DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw'}
           width={this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
+          height={'calc(' + this.state.hierarchyAssetsDividerTop + 'vh - ' + (2 * WINDOW_PADDING) + 'vw)'}
           entities={this.state.currentScene.entities}
           systems={this.state.currentScene.systems}
           inspected={this.state.inspected}
@@ -124,6 +128,24 @@ class Zap extends React.Component {
           toggleSystemSelection={this.toggleSystemSelection}
           addSystem={this.addSystem}
           addEntity={this.addEntity}
+        />
+
+        <div
+          className="Zap-HierarchyAssets-Divider"
+          style={{
+            top: this.state.hierarchyAssetsDividerTop + 'vh',
+            left: DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw',
+            width: this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft + 'vw',
+          }}
+          onMouseDown={() => this.setState({ isHierarchyAssetsDividerBeingDragged: true })}
+          onMouseUp={() => this.setState({ isHierarchyAssetsDividerBeingDragged: false })}
+        />
+
+        <AssetWindow
+          top={DIVIDER_HEIGHT + this.state.hierarchyAssetsDividerTop + 'vh'}
+          left={DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw'}
+          width={this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
+          height={'calc(' + (100 - this.state.hierarchyAssetsDividerTop - DIVIDER_HEIGHT) + 'vh - ' + (2 * WINDOW_PADDING) + 'vw)'}
         />
 
         <div
@@ -412,12 +434,18 @@ class Zap extends React.Component {
     }
 
     const topVh = 100 * e.clientY / window.innerHeight;
-    if (this.state.isPreviewPlayDividerTopBeingDragged) {
+    if (this.state.isPreviewPlayDividerBeingDragged) {
       e.preventDefault();
       this.setState({
         previewPlayDividerTop: topVh,
       }, () => {
         this.resizeRenderers();
+      });
+    }
+    if (this.state.isHierarchyAssetsDividerBeingDragged) {
+      e.preventDefault();
+      this.setState({
+        hierarchyAssetsDividerTop: topVh,
       });
     }
   }

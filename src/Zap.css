@@ -18,6 +18,14 @@
   margin: 0;
 }
 
+.Zap-PreviewPlay-Divider {
+  background-color: var(--grey);
+  height: 2vh;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+}
+
 .Zap-CanvasHierarchy-Divider {
   background-color: var(--grey);
   height: 100vh;
@@ -27,6 +35,13 @@
   top: 0;
 }
 
+.Zap-HierarchyAssets-Divider {
+  background-color: var(--grey);
+  height: 2vh;
+  position: fixed;
+  z-index: 1;
+}
+
 .Zap-HierarchyInspector-Divider {
   background-color: var(--grey);
   height: 100vh;
@@ -34,14 +49,6 @@
   position: fixed;
   z-index: 1;
   top: 0;
-}
-
-.Zap-PreviewPlay-Divider {
-  background-color: var(--grey);
-  height: 2vh;
-  position: fixed;
-  z-index: 1;
-  left: 0;
 }
 
 .Zap-PreviewWindow {

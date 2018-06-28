@@ -6,6 +6,7 @@ import Button from './Button';
 const HierarchyWindow = ({
   left,
   width,
+  height,
   entities,
   systems,
   inspected,
@@ -20,6 +21,7 @@ const HierarchyWindow = ({
     style={{
       left,
       width,
+      height,
     }}
   >
     <h2>Hierarchy</h2>
