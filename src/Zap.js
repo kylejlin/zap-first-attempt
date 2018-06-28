@@ -344,6 +344,7 @@ class Zap extends React.Component {
         runStatus: 'STOPPED',
         initSceneBackup: null,
         currentScene: prevState.initSceneBackup,
+        inspected: null,
       };
     }, () => {
       // In case the windows were resized in play mode.
