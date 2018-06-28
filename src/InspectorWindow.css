@@ -44,6 +44,8 @@
   color: var(--text-color);
   border: 1px solid var(--soft-white);
   display: inline-block;
+  width: 40%;
+  height: 50vh;
 }
 
 .Zap-AddComponentMenu .Zap-SearchInput {
@@ -54,11 +56,18 @@
   padding: 1vw;
   font-size: 1em;
   display: block;
+  width: calc(100% - 2vw - 2px);
+}
+
+.Zap-AddComponentMenu .Zap-SearchInput:focus {
+  box-shadow: 0 0 1em 1px var(--grey);
 }
 
 .Zap-AddComponentMenu ul {
   margin: 0;
   padding: 0;
+  overflow: auto;
+  height: calc(100% - 1em - 2vw - 2px);
 }
 
 .Zap-AddComponentMenu li {
