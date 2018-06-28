@@ -333,6 +333,7 @@ class Zap extends React.Component {
         runStatus: 'RUNNING',
         initSceneBackup: prevState.currentScene,
         currentScene: liveScene,
+        inspected: null,
       };
     });
   }
