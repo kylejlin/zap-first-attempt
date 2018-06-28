@@ -177,6 +177,15 @@ class Zap extends React.Component {
           isAddComponentMenuOpen={this.state.isAddComponentMenuOpen}
           searchQuery={this.state.searchQuery}
           componentCreators={components}
+          existingComponentNames={
+            (
+            this.state.inspected
+            && this.state.inspected.isEntity
+            && Object.keys(this.state.inspected)
+              .filter(name => !['isEntity', 'isVirtual'].includes(name))
+            )
+            || []
+          }
 
           openAddComponentMenu={this.openAddComponentMenu}
           editSystem={this.editSystem}

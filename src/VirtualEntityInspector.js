@@ -9,6 +9,7 @@ const VirtualEntityInspector = ({
   isAddComponentMenuOpen,
   searchQuery,
   componentCreators,
+  existingComponentNames,
 
   openAddComponentMenu,
   updateSearchQuery,
@@ -49,7 +50,12 @@ const VirtualEntityInspector = ({
           />
           <ul>
             {sortBySimilarityToQuery(searchQuery, Object.values(componentCreators).map(c => c.name)).map((componentName) => (
-              <li onClick={() => addComponent(componentCreators[componentName]())}>{componentName}</li>
+              <li
+                onClick={() => addComponent(componentCreators[componentName]())}
+                className={existingComponentNames.includes(componentName) ? 'Zap-UnaddableComponent' : ''}
+              >
+                {componentName}
+              </li>
             ))}
           </ul>
         </div>

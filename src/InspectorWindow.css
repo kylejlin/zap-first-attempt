@@ -76,3 +76,7 @@
   padding-left: 2.5vw;
   border: 1px solid var(--grey);
 }
+
+.Zap-UnaddableComponent {
+  opacity: 0.2;
+}

@@ -12,6 +12,7 @@ const InspectorWindow = ({
   isAddComponentMenuOpen,
   searchQuery,
   componentCreators,
+  existingComponentNames,
 
   openAddComponentMenu,
   editSystem,
@@ -39,6 +40,7 @@ const InspectorWindow = ({
               isAddComponentMenuOpen={isAddComponentMenuOpen}
               searchQuery={searchQuery}
               componentCreators={componentCreators}
+              existingComponentNames={existingComponentNames}
 
               openAddComponentMenu={openAddComponentMenu}
               updateSearchQuery={updateSearchQuery}
