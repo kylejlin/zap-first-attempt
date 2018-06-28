@@ -343,10 +343,15 @@ class Zap extends React.Component {
     window.addEventListener('message', (event) => {
       const message = event.data;
       if (message.type === 'READY') {
+        const virtualSystem = this.state.currentScene.systems.find(v => v.name === systemName);
+        if (!virtualSystem) {
+          throw new Error('Virtual system not found.');
+        }
+        const { src } = virtualSystem;
         editorWindow.postMessage(
           {
             type: 'SET_INITIAL_CODE',
-            code: newSystemInitialCode,
+            code: src,
           },
           '*'
         );
