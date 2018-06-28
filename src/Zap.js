@@ -43,7 +43,9 @@ class Zap extends React.Component {
       inspected: null,
 
       isAddComponentMenuOpen: false,
+      selectedComponent: null,
       searchQuery: '',
+      isSelectedComponentDerived: true,
 
       assetManager: new AssetManager(),
 
@@ -186,12 +188,16 @@ class Zap extends React.Component {
             )
             || []
           }
+          selectedComponent={this.state.selectedComponent}
+          isDerived={this.state.isSelectedComponentDerived}
 
           openAddComponentMenu={this.openAddComponentMenu}
           editSystem={this.editSystem}
           updateSearchQuery={this.updateSearchQuery}
-          addComponent={this.addComponentToInspectedEntity}
+          selectComponentToAdd={this.selectComponentToAdd}
           editCreator={this.editCreator}
+          toggleIsDerived={this.toggleIsSelectedComponentDerived}
+          addComponent={this.addComponent}
         />
       </div>
     );
@@ -428,9 +434,9 @@ class Zap extends React.Component {
         inspected: prevState.inspected === entity
           ? null
           : entity,
-        isAddComponentMenuOpen: false,
       };
     });
+    this.closeAndCleanUpAddComponentMenu();
   }
 
   toggleSystemSelection = (system) => {
@@ -439,9 +445,9 @@ class Zap extends React.Component {
         inspected: prevState.inspected === system
           ? null
           : system,
-        isAddComponentMenuOpen: false,
       };
     });
+    this.closeAndCleanUpAddComponentMenu();
   }
 
   updateDraggedDivider = (e) => {
@@ -484,20 +490,37 @@ class Zap extends React.Component {
     });
   }
 
-  addComponentToInspectedEntity = (component) => {
-    const entity = this.state.inspected;
+  selectComponentToAdd = (component) => {
+    this.setState({
+      selectedComponent: component,
+    });
+  }
+
+  addComponent = () => {
+    const { inspected: entity, isSelectedComponentDerived, selectedComponent } = this.state;
 
     if (!entity || !entity.isEntity) {
       throw new TypeError('No entity selected.');
     }
 
-    const existingComponent = entity[component.name];
-    if ('object' === typeof existingComponent && existingComponent !== null) {
-      return;
-    }
+    const component = isSelectedComponentDerived
+      ? {
+        name: selectedComponent.name,
+        isDerived: true,
+        providerName: null,
+      }
+      : selectedComponent;
 
     entity.addComponent(component);
-    this.forceUpdate();
+    this.closeAndCleanUpAddComponentMenu();
+  }
+
+  closeAndCleanUpAddComponentMenu = () => {
+    this.setState({
+      isAddComponentMenuOpen: false,
+      selectedComponent: null,
+      isSelectedComponentDerived: true,
+    });
   }
 
   addEntity = () => {
@@ -567,6 +590,12 @@ class Zap extends React.Component {
     });
     window.addEventListener('beforeunload', () => {
       editorWindow.close();
+    });
+  }
+
+  toggleIsSelectedComponentDerived = (isDerived) => {
+    this.setState({
+      isSelectedComponentDerived: isDerived,
     });
   }
 }

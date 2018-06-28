@@ -48,7 +48,7 @@
   height: 50vh;
 }
 
-.Zap-AddComponentMenu .Zap-SearchInput {
+/* .Zap-AddComponentMenu .Zap-SearchInput {
   background-color: #000000;
   color: var(--text-color);
   outline: none;
@@ -57,17 +57,22 @@
   font-size: 1em;
   display: block;
   width: calc(100% - 2vw - 2px);
-}
+} */
 
 .Zap-AddComponentMenu .Zap-SearchInput:focus {
   box-shadow: 0 0 1em 1px var(--grey);
 }
 
-.Zap-AddComponentMenu ul {
+.Zap-AddComponentMenu .Zap-AddComponentMenuMain {
   margin: 0;
   padding: 0;
   overflow: auto;
   height: calc(100% - 1em - 2vw - 2px);
+}
+
+.Zap-AddComponentMenu .Zap-AddComponentMenuMain ul {
+  margin: 0;
+  padding: 0;
 }
 
 .Zap-AddComponentMenu li {
@@ -79,4 +84,27 @@
 
 .Zap-UnaddableComponent {
   opacity: 0.2;
+}
+
+.Zap-AddComponentMenu .Zap-AddComponentMenuHead {
+  /* background-color: #000000;
+  border: 1px solid var(--grey);
+  padding: 1vw;
+  font-size: 1em;
+  display: block;
+  width: calc(100% - 2vw - 2px); */
+
+  background-color: #000000;
+  color: var(--text-color);
+  outline: none;
+  border: 1px solid var(--grey);
+  padding: 1vw;
+  font-size: 1em;
+  display: block;
+  width: calc(100% - 2vw - 2px);
+}
+
+.Zap-IsDerived {
+  display: block;
+  margin: 1vw;
 }

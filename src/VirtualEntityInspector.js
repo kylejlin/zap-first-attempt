@@ -10,9 +10,13 @@ const VirtualEntityInspector = ({
   searchQuery,
   componentCreators,
   existingComponentNames,
+  selectedComponent,
+  isDerived,
 
   openAddComponentMenu,
   updateSearchQuery,
+  selectComponentToAdd,
+  toggleIsDerived,
   addComponent,
 }) => (
   <div className="Zap-EntityInspector">
@@ -38,27 +42,75 @@ const VirtualEntityInspector = ({
       })
     }
     {isAddComponentMenuOpen
-      ? (
-        <div className="Zap-AddComponentMenu">
-          <input
-            type="text"
-            className="Zap-SearchInput"
-            placeholder="Search"
-            autoFocus={true}
-            value={searchQuery}
-            onChange={(e) => updateSearchQuery(e.target.value)}
-          />
-          <ul>
-            {sortBySimilarityToQuery(searchQuery, Object.values(componentCreators).map(c => c.name)).map((componentName) => (
-              <li
-                onClick={() => addComponent(componentCreators[componentName]())}
-                className={existingComponentNames.includes(componentName) ? 'Zap-UnaddableComponent' : ''}
+      ? (selectedComponent === null
+        ? (
+          <div className="Zap-AddComponentMenu">
+            <input
+              type="text"
+              className="Zap-AddComponentMenuHead"
+              placeholder="Search"
+              autoFocus={true}
+              value={searchQuery}
+              onChange={(e) => updateSearchQuery(e.target.value)}
+            />
+            <div className="Zap-AddComponentMenuMain">
+              <ul>
+                {sortBySimilarityToQuery(searchQuery, Object.values(componentCreators).map(c => c.name)).map((componentName) => (
+                  <li
+                    onClick={() => {
+                      if (!existingComponentNames.includes(componentName)) {
+                        selectComponentToAdd(componentCreators[componentName]());
+                      }
+                    }}
+                    className={existingComponentNames.includes(componentName) ? 'Zap-UnaddableComponent' : ''}
+                  >
+                    {componentName}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )
+        : (
+          <div className="Zap-AddComponentMenu">
+            <div className="Zap-AddComponentMenuHead">
+              {selectedComponent.name}
+            </div>
+            <div className="Zap-AddComponentMenuMain">
+              <label className="Zap-IsDerived">
+                <input
+                  type="checkbox"
+                  checked={isDerived}
+                  onChange={(e) => toggleIsDerived(e.target.checked)}
+                />
+                Derive
+              </label>
+              {isDerived
+                ? null
+                : (
+                  <ul>
+                    {Object.keys(selectedComponent).map((propertyName) => (
+                      <li>
+                        <label>
+                          {propertyName}:
+                          <textarea
+                            value={JSON.stringify(selectedComponent[propertyName], null, 4)}
+                          />
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                )
+              }
+              <Button
+                className="Zap-AddButton"
+                onClick={addComponent}
               >
-                {componentName}
-              </li>
-            ))}
-          </ul>
-        </div>
+                Add
+              </Button>
+            </div>
+          </div>
+        )
       )
       : (
         <Button

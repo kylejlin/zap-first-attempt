@@ -13,12 +13,16 @@ const InspectorWindow = ({
   searchQuery,
   componentCreators,
   existingComponentNames,
+  selectedComponent,
+  isDerived,
 
   openAddComponentMenu,
   editSystem,
   updateSearchQuery,
-  addComponent,
+  selectComponentToAdd,
   editCreator,
+  toggleIsDerived,
+  addComponent,
 }) => (
   <div
     className="Zap-InspectorWindow"
@@ -41,9 +45,13 @@ const InspectorWindow = ({
               searchQuery={searchQuery}
               componentCreators={componentCreators}
               existingComponentNames={existingComponentNames}
+              selectedComponent={selectedComponent}
+              isDerived={isDerived}
 
               openAddComponentMenu={openAddComponentMenu}
               updateSearchQuery={updateSearchQuery}
+              selectComponentToAdd={selectComponentToAdd}
+              toggleIsDerived={toggleIsDerived}
               addComponent={addComponent}
             />
           );
