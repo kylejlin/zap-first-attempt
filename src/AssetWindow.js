@@ -12,7 +12,8 @@ const AssetWindow = ({
   componentProviderNames,
 
   addComponentCreator,
-  addComponentProvider
+  addComponentProvider,
+  inspectComponentCreator,
 }) => (
   <div
     className="Zap-AssetWindow"
@@ -28,7 +29,7 @@ const AssetWindow = ({
       <h3>Component creators</h3>
       <ul>
         {componentCreatorNames.map((creatorName) => (
-          <li>{creatorName}</li>
+          <li onClick={() => inspectComponentCreator(creatorName)}>{creatorName}</li>
         ))}
         <li>
           <Button

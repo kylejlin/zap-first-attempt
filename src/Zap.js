@@ -6,7 +6,7 @@ import VirtualSystem from './ecs/VirtualSystem';
 import VirtualEntity from './ecs/VirtualEntity';
 
 import AssetManager from './assetManager/AssetManager';
-import CustomComponentCreatorSource from './assetManager/CustomComponentCreatorSource';
+import ComponentCreatorSource from './assetManager/ComponentCreatorSource';
 
 import getInitScene from './getInitScene';
 import getRenderSystem from './getRenderSystem';
@@ -38,6 +38,7 @@ class Zap extends React.Component {
       currentScene: getInitScene(),
       runStatus: 'STOPPED',
       systemWindowDict: {},
+      creatorWindowDict: {},
 
       inspected: null,
 
@@ -157,6 +158,7 @@ class Zap extends React.Component {
 
           addComponentCreator={this.addComponentCreatorToAssets}
           addComponentProvider={this.addComponentProviderToAssets}
+          inspectComponentCreator={this.inspectComponentCreator}
         />
 
         <div
@@ -180,6 +182,7 @@ class Zap extends React.Component {
           editSystem={this.editSystem}
           updateSearchQuery={this.updateSearchQuery}
           addComponent={this.addComponentToInspectedEntity}
+          editCreator={this.editCreator}
         />
       </div>
     );
@@ -497,13 +500,60 @@ class Zap extends React.Component {
   }
 
   addComponentCreatorToAssets = () => {
-    const creatorSource = new CustomComponentCreatorSource('MyAwesomeComponent', newComponentCreatorInitialCode);
+    const creatorSource = new ComponentCreatorSource('MyAwesomeComponent', newComponentCreatorInitialCode);
     this.state.assetManager.addComponentCreatorSource(creatorSource);
     this.forceUpdate();
   }
 
   addComponentProviderToAssets = () => {
     throw new Error('TODO addComponentProviderToAssets');
+  }
+
+  inspectComponentCreator = (creatorName) => {
+    this.setState((prevState) => {
+      return {
+        inspected: prevState.assetManager.componentCreatorSources[creatorName],
+      };
+    });
+  }
+
+  editCreator = (creatorName) => {
+    const existingEditorWindow = this.state.creatorWindowDict[creatorName];
+    if (existingEditorWindow && !existingEditorWindow.closed) {
+      existingEditorWindow.focus();
+      return;
+    }
+
+    const editorWindow = window.open('/#editor');
+    this.setState((prevState) => {
+      return {
+        creatorWindowDict: {
+          ...prevState.creatorWindowDict,
+          [creatorName]: editorWindow,
+        },
+      };
+    });
+    window.addEventListener('message', (event) => {
+      const message = event.data;
+      if (message.type === 'READY') {
+        editorWindow.postMessage(
+          {
+            type: 'SET_INITIAL_CODE',
+            code: this.state.assetManager.componentCreatorSources[creatorName].src,
+          },
+          '*'
+        );
+      } else if (message.type === 'CODE_UPDATE') {
+        const creatorSource = this.state.assetManager.componentCreatorSources[creatorName];
+        if (!creatorSource) {
+          throw new Error('Virtual system not found.');
+        }
+        creatorSource.src = message.code;
+      }
+    });
+    window.addEventListener('beforeunload', () => {
+      editorWindow.close();
+    });
   }
 }
 

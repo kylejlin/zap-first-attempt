@@ -1,0 +1,8 @@
+.Zap-ComponentCreatorInspector {
+  margin: 2.5vw;
+  color: var(--text-color);
+}
+
+.Zap-ComponentCreatorInspector .Zap-EditButton {
+  margin-top: 2.5vw;
+}

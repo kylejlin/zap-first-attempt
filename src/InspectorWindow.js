@@ -3,6 +3,7 @@ import './InspectorWindow.css';
 
 import VirtualEntityInspector from './VirtualEntityInspector';
 import VirtualSystemInspector from './VirtualSystemInspector';
+import ComponentCreatorInspector from './ComponentCreatorInspector';
 
 const InspectorWindow = ({
   left,
@@ -16,6 +17,7 @@ const InspectorWindow = ({
   editSystem,
   updateSearchQuery,
   addComponent,
+  editCreator,
 }) => (
   <div
     className="Zap-InspectorWindow"
@@ -56,6 +58,14 @@ const InspectorWindow = ({
           );
         }
         return null; // TODO SystemInspector
+      }
+      if (inspected.isComponentCreatorSource) {
+        return (
+          <ComponentCreatorInspector
+            creatorName={inspected.name}
+            editCreator={editCreator}
+          />
+        );
       }
     })()}
   </div>
