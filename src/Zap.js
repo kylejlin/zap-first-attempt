@@ -433,6 +433,11 @@ class Zap extends React.Component {
       throw new TypeError('No entity selected.');
     }
 
+    const existingComponent = entity[component.name];
+    if ('object' === typeof existingComponent && existingComponent !== null) {
+      return;
+    }
+
     entity.addComponent(component);
     this.forceUpdate();
   }
