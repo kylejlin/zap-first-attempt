@@ -3,6 +3,7 @@ import './Zap.css';
 import * as THREE from 'three';
 import * as components from './components';
 import VirtualSystem from './ecs/VirtualSystem';
+import VirtualEntity from './ecs/VirtualEntity';
 
 import getInitScene from './getInitScene';
 import getRenderSystem from './getRenderSystem';
@@ -122,6 +123,7 @@ class Zap extends React.Component {
           toggleEntitySelection={this.toggleEntitySelection}
           toggleSystemSelection={this.toggleSystemSelection}
           addSystem={this.addSystem}
+          addEntity={this.addEntity}
         />
 
         <div
@@ -439,6 +441,19 @@ class Zap extends React.Component {
     }
 
     entity.addComponent(component);
+    this.forceUpdate();
+  }
+
+  addEntity = () => {
+    const { currentScene } = this.state;
+    if (!currentScene.isVirtual) {
+      throw new TypeError('Current scene is not a VirtualScene.');
+    }
+    const entity = new VirtualEntity();
+    entity.addComponent(
+      components.InspectorName('UnnamedEntity')
+    );
+    currentScene.entities.push(entity);
     this.forceUpdate();
   }
 }

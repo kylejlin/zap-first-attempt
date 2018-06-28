@@ -13,6 +13,7 @@ const HierarchyWindow = ({
   toggleEntitySelection,
   toggleSystemSelection,
   addSystem,
+  addEntity,
 }) => (
   <div
     className="Zap-HierarchyWindow"
@@ -37,6 +38,14 @@ const HierarchyWindow = ({
             </li>
           );
         })}
+        <li>
+          <Button
+            className="Zap-AddButton"
+            onClick={addEntity}
+          >
+            Add entity
+          </Button>
+        </li>
       </ul>
     </div>
 

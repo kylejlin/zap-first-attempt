@@ -5,6 +5,7 @@ import compileSystem from '../compileSystem';
 
 class VirtualScene {
   constructor() {
+    this.isVirtual = true;
     this.entities = [];
     this.systems = [];
     this.globals = {};
