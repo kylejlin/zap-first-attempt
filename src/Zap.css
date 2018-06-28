@@ -9,22 +9,13 @@
   --add-button-color: #008800;
   --edit-button-color: #0088CC;
   --menu-color: #111111;
+  color: var(--text-color);
 }
 
 .Zap h2, .Zap h3 {
-  color: var(--text-color);
   font-weight: lighter;
   width: min-content;
   margin: 0;
-}
-
-.Zap-CommandBar {
-  background-color: var(--dark-grey);
-  position: fixed;
-  top: 0;
-  left: 0vw;
-  width: 50vw;
-  height: 10vh;
 }
 
 .Zap-CanvasHierarchy-Divider {
@@ -53,45 +44,6 @@
   left: 0;
 }
 
-.Zap-CommandButton {
-  background-color: var(--grey);
-  width: 8vh;
-  height: 8vh;
-  border: none;
-  border-radius: 2vh;
-  margin: 1vh;
-  outline: none;
-}
-
-.Zap-CommandButton.Zap-DisabledButton {
-  opacity: 0.2;
-}
-
-.Zap-IconPlay {
-  width: 0;
-  height: 0;
-  border-top: 2.30940107676vh solid transparent;
-  border-bottom: 2.30940107676vh solid transparent;
-  border-left: 4vh solid var(--button-icon-color);
-  transform: translate(25%);
-}
-
-.Zap-IconStop {
-  width: 3vh;
-  height: 3vh;
-  transform: translate(50%);
-  background-color: var(--button-icon-color);
-}
-
-.Zap-IconPause {
-  background-color: transparent;
-  width: 1vh;
-  height: 6vh;
-  border-left: 1.5vh solid var(--button-icon-color);
-  border-right: 1.5vh solid var(--button-icon-color);
-  transform: translate(25%);
-}
-
 .Zap-PreviewWindow {
   background-color: var(--should-not-be-seen);
   position: fixed;
@@ -110,57 +62,6 @@
   height: 45vh;
 }
 
-.Zap-HierarchyWindow {
-  background-color: var(--dark-grey);
-  color: var(--text-color);
-  position: fixed;
-  top: 0;
-  width: 22vw;
-  height: calc(100vh - 3vw);
-  padding: 1.5vw;
-}
-
-.Zap-HierarchySelectedEntity {
-  background-color: #0088BB;
-  color: #111111;
-}
-
-.Zap-HierarchyEntities li, .Zap-HierarchySystems li {
-  list-style: none;
-  margin: 0.5vw;
-}
-
-.Zap-HierarchyEntities, .Zap-HierarchySystems {
-  padding: 2.5vw;
-}
-
-.Zap-InspectorWindow {
-  background-color: var(--dark-grey);
-  position: fixed;
-  top: 0;
-  left: 75vw;
-  width: 22vw;
-  height: calc(100vh - 3vw);
-  padding: 1.5vw;
-  overflow: auto;
-}
-
-.Zap-InspectorComponent {
-  margin: 2.5vw;
-}
-
-.Zap-InspectorComponentProperty {
-  margin: 2.5vw;
-  color: var(--text-color);
-}
-
-.Zap-InspectorComponentPropertyEditor {
-  background-color: var(--soft-black);
-  color: var(--text-color);
-  font-family: monospace;
-  font-size: 1vw;
-}
-
 .Zap-Button {
   border-radius: 0.25vw;
   padding: 0.5vw;
@@ -177,47 +78,4 @@
 
 .Zap-EditButton {
   background-color: var(--edit-button-color);
-}
-
-.Zap-SystemInspector {
-  margin: 2.5vw;
-  color: var(--text-color);
-}
-
-.Zap-SystemInspector .Zap-EditButton {
-  margin-top: 2.5vw;
-}
-
-.Zap-EntityInspector .Zap-AddButton {
-  margin: 2.5vw;
-}
-
-.Zap-AddComponentMenu {
-  margin: 2.5vw;
-  background: var(--menu-color);
-  color: var(--text-color);
-  border: 1px solid var(--soft-white);
-  display: inline-block;
-}
-
-.Zap-AddComponentMenu .Zap-SearchInput {
-  background-color: #000000;
-  color: var(--text-color);
-  outline: none;
-  border: 1px solid var(--grey);
-  padding: 1vw;
-  font-size: 1em;
-  display: block;
-}
-
-.Zap-AddComponentMenu ul {
-  margin: 0;
-  padding: 0;
-}
-
-.Zap-AddComponentMenu li {
-  list-style: none;
-  padding: 1vw;
-  padding-left: 2.5vw;
-  border: 1px solid var(--grey);
 }

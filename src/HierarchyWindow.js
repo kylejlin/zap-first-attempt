@@ -1,4 +1,5 @@
 import React from 'react';
+import './HierarchyWindow.css';
 
 const HierarchyWindow = ({
   left,

@@ -1,4 +1,5 @@
 import React from 'react';
+import './InspectorWindow.css';
 
 import VirtualEntityInspector from './VirtualEntityInspector';
 import VirtualSystemInspector from './VirtualSystemInspector';

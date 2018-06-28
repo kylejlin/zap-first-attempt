@@ -1,4 +1,5 @@
 import React from 'react';
+import './CommandBar.css';
 
 import PlayButton from './PlayButton';
 import PauseButton from './PauseButton';
