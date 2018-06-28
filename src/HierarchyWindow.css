@@ -1,16 +1,13 @@
 .Zap-HierarchyWindow {
   background-color: var(--dark-grey);
-  color: var(--text-color);
   position: fixed;
   top: 0;
-  width: 22vw;
   height: calc(100vh - 3vw);
   padding: 1.5vw;
 }
 
 .Zap-HierarchySelectedEntity {
-  background-color: #0088BB;
-  color: #111111;
+  background-color: #0077AA;
 }
 
 .Zap-HierarchyEntities li, .Zap-HierarchySystems li {
