@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import './InspectorWindow.css';
 
 import VirtualEntityInspector from './VirtualEntityInspector';
@@ -81,6 +82,27 @@ const InspectorWindow = ({
   </div>
 );
 
+// In CSS vw units
+const DIVIDER_WIDTH = 1;
+const WINDOW_PADDING = 1.5;
+// In CSS vh units
+const DIVIDER_HEIGHT = 2;
+const COMMAND_BAR_HEIGHT = 10;
 
+const mapStateToProps = (state) => {
+  return {
+    left: DIVIDER_WIDTH + state.divider.hierarchyInspectorDividerLeft + 'vw',
+    width: 100 - state.divider.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw',
+  };
+};
 
-export default InspectorWindow;
+const mapDispatchToProps = (dispatch) => {
+  return {
+
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(InspectorWindow);

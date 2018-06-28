@@ -20,6 +20,20 @@ import InspectorWindow from './InspectorWindow';
 import HierarchyWindow from './HierarchyWindow';
 import AssetWindow from './AssetWindow';
 
+import { createStore, applyMiddleware, compose } from 'redux';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+import reducer from './reducers/index';
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const store = createStore(
+  reducer,
+  composeEnhancers(
+    applyMiddleware(thunk)
+  )
+);
+
 // In CSS vw units
 const DIVIDER_WIDTH = 1;
 const WINDOW_PADDING = 1.5;
@@ -64,142 +78,142 @@ class Zap extends React.Component {
 
   render = () => {
     return (
-      <div
-        className="Zap"
-        onMouseMove={this.updateDraggedDivider}
-      >
-        <CommandBar
-          width={this.state.canvasHierarchyDividerLeft + 'vw'}
-          runStatus={this.state.runStatus}
-
-          play={this.play}
-          stop={this.stop}
-          pause={this.pause}
-          resume={this.resume}
-        />
-
+      <Provider store={store}>
         <div
-          className="Zap-PreviewWindow"
-          style={{
-            width: this.state.canvasHierarchyDividerLeft + 'vw',
-          }}
+          className="Zap"
+          onMouseMove={this.updateDraggedDivider}
         >
-          <canvas
-            ref={this.previewCanvasRef}
-            width={this.getPreviewCanvasDimensions().width}
-            height={this.getPreviewCanvasDimensions().height}
+          <CommandBar
+            width={this.state.canvasHierarchyDividerLeft + 'vw'}
+            runStatus={this.state.runStatus}
+
+            play={this.play}
+            stop={this.stop}
+            pause={this.pause}
+            resume={this.resume}
+          />
+
+          <div
+            className="Zap-PreviewWindow"
+            style={{
+              width: this.state.canvasHierarchyDividerLeft + 'vw',
+            }}
+          >
+            <canvas
+              ref={this.previewCanvasRef}
+              width={this.getPreviewCanvasDimensions().width}
+              height={this.getPreviewCanvasDimensions().height}
+            />
+          </div>
+
+          <div
+            className="Zap-PreviewPlay-Divider"
+            style={{
+              top: this.state.previewPlayDividerTop + 'vh',
+              width: this.state.canvasHierarchyDividerLeft + 'vw',
+            }}
+            onMouseDown={() => this.setState({ isPreviewPlayDividerBeingDragged: true })}
+            onMouseUp={() => this.setState({ isPreviewPlayDividerBeingDragged: false })}
+          />
+
+          <div
+            className="Zap-PlayWindow"
+            style={{
+              width: this.state.canvasHierarchyDividerLeft + 'vw',
+              top: this.state.previewPlayDividerTop + DIVIDER_HEIGHT + 'vh',
+              height: 100 - (this.state.previewPlayDividerTop + DIVIDER_HEIGHT) + 'vh',
+            }}
+          >
+            <canvas
+              ref={this.playCanvasRef}
+              width={this.getPlayCanvasDimensions().width}
+              height={this.getPlayCanvasDimensions().height}
+            />
+          </div>
+
+          <div
+            className="Zap-CanvasHierarchy-Divider"
+            style={{
+              left: this.state.canvasHierarchyDividerLeft + 'vw',
+            }}
+            onMouseDown={() => this.setState({ isCanvasHierarchyDividerBeingDragged: true })}
+            onMouseUp={() => this.setState({ isCanvasHierarchyDividerBeingDragged: false })}
+          />
+
+          <HierarchyWindow
+            left={DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw'}
+            width={this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
+            height={'calc(' + this.state.hierarchyAssetsDividerTop + 'vh - ' + (2 * WINDOW_PADDING) + 'vw)'}
+            entities={this.state.currentScene.entities}
+            systems={this.state.currentScene.systems}
+            inspected={this.state.inspected}
+
+            toggleEntitySelection={this.toggleEntitySelection}
+            toggleSystemSelection={this.toggleSystemSelection}
+            addSystem={this.addSystem}
+            addEntity={this.addEntity}
+          />
+
+          <div
+            className="Zap-HierarchyAssets-Divider"
+            style={{
+              top: this.state.hierarchyAssetsDividerTop + 'vh',
+              left: DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw',
+              width: this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft + 'vw',
+            }}
+            onMouseDown={() => this.setState({ isHierarchyAssetsDividerBeingDragged: true })}
+            onMouseUp={() => this.setState({ isHierarchyAssetsDividerBeingDragged: false })}
+          />
+
+          <AssetWindow
+            top={DIVIDER_HEIGHT + this.state.hierarchyAssetsDividerTop + 'vh'}
+            left={DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw'}
+            width={this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
+            height={'calc(' + (100 - this.state.hierarchyAssetsDividerTop - DIVIDER_HEIGHT) + 'vh - ' + (2 * WINDOW_PADDING) + 'vw)'}
+            componentCreatorNames={Object.keys(this.state.assetManager.componentCreators)}
+            componentProviderNames={Object.keys(this.state.assetManager.componentProviders)}
+
+            addComponentCreator={this.addComponentCreatorToAssets}
+            addComponentProvider={this.addComponentProviderToAssets}
+            inspectComponentCreator={this.inspectComponentCreator}
+          />
+
+          <div
+            className="Zap-HierarchyInspector-Divider"
+            style={{
+              left: this.state.hierarchyInspectorDividerLeft + 'vw',
+            }}
+            onMouseDown={() => this.setState({ isHierarchyInspectorDividerBeingDragged: true })}
+            onMouseUp={() => this.setState({ isHierarchyInspectorDividerBeingDragged: false })}
+          />
+
+          <InspectorWindow
+            inspected={this.state.inspected}
+            isAddComponentMenuOpen={this.state.isAddComponentMenuOpen}
+            searchQuery={this.state.searchQuery}
+            componentCreators={components}
+            existingComponentNames={
+              (
+              this.state.inspected
+              && this.state.inspected.isEntity
+              && Object.keys(this.state.inspected)
+                .filter(name => !['isEntity', 'isVirtual'].includes(name))
+              )
+              || []
+            }
+            selectedComponent={this.state.selectedComponent}
+            isDerived={this.state.isSelectedComponentDerived}
+
+            openAddComponentMenu={this.openAddComponentMenu}
+            editSystem={this.editSystem}
+            updateSearchQuery={this.updateSearchQuery}
+            selectComponentToAdd={this.selectComponentToAdd}
+            editCreator={this.editCreator}
+            toggleIsDerived={this.toggleIsSelectedComponentDerived}
+            addComponent={this.addComponent}
           />
         </div>
-
-        <div
-          className="Zap-PreviewPlay-Divider"
-          style={{
-            top: this.state.previewPlayDividerTop + 'vh',
-            width: this.state.canvasHierarchyDividerLeft + 'vw',
-          }}
-          onMouseDown={() => this.setState({ isPreviewPlayDividerBeingDragged: true })}
-          onMouseUp={() => this.setState({ isPreviewPlayDividerBeingDragged: false })}
-        />
-
-        <div
-          className="Zap-PlayWindow"
-          style={{
-            width: this.state.canvasHierarchyDividerLeft + 'vw',
-            top: this.state.previewPlayDividerTop + DIVIDER_HEIGHT + 'vh',
-            height: 100 - (this.state.previewPlayDividerTop + DIVIDER_HEIGHT) + 'vh',
-          }}
-        >
-          <canvas
-            ref={this.playCanvasRef}
-            width={this.getPlayCanvasDimensions().width}
-            height={this.getPlayCanvasDimensions().height}
-          />
-        </div>
-
-        <div
-          className="Zap-CanvasHierarchy-Divider"
-          style={{
-            left: this.state.canvasHierarchyDividerLeft + 'vw',
-          }}
-          onMouseDown={() => this.setState({ isCanvasHierarchyDividerBeingDragged: true })}
-          onMouseUp={() => this.setState({ isCanvasHierarchyDividerBeingDragged: false })}
-        />
-
-        <HierarchyWindow
-          left={DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw'}
-          width={this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
-          height={'calc(' + this.state.hierarchyAssetsDividerTop + 'vh - ' + (2 * WINDOW_PADDING) + 'vw)'}
-          entities={this.state.currentScene.entities}
-          systems={this.state.currentScene.systems}
-          inspected={this.state.inspected}
-
-          toggleEntitySelection={this.toggleEntitySelection}
-          toggleSystemSelection={this.toggleSystemSelection}
-          addSystem={this.addSystem}
-          addEntity={this.addEntity}
-        />
-
-        <div
-          className="Zap-HierarchyAssets-Divider"
-          style={{
-            top: this.state.hierarchyAssetsDividerTop + 'vh',
-            left: DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw',
-            width: this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft + 'vw',
-          }}
-          onMouseDown={() => this.setState({ isHierarchyAssetsDividerBeingDragged: true })}
-          onMouseUp={() => this.setState({ isHierarchyAssetsDividerBeingDragged: false })}
-        />
-
-        <AssetWindow
-          top={DIVIDER_HEIGHT + this.state.hierarchyAssetsDividerTop + 'vh'}
-          left={DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw'}
-          width={this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
-          height={'calc(' + (100 - this.state.hierarchyAssetsDividerTop - DIVIDER_HEIGHT) + 'vh - ' + (2 * WINDOW_PADDING) + 'vw)'}
-          componentCreatorNames={Object.keys(this.state.assetManager.componentCreators)}
-          componentProviderNames={Object.keys(this.state.assetManager.componentProviders)}
-
-          addComponentCreator={this.addComponentCreatorToAssets}
-          addComponentProvider={this.addComponentProviderToAssets}
-          inspectComponentCreator={this.inspectComponentCreator}
-        />
-
-        <div
-          className="Zap-HierarchyInspector-Divider"
-          style={{
-            left: this.state.hierarchyInspectorDividerLeft + 'vw',
-          }}
-          onMouseDown={() => this.setState({ isHierarchyInspectorDividerBeingDragged: true })}
-          onMouseUp={() => this.setState({ isHierarchyInspectorDividerBeingDragged: false })}
-        />
-
-        <InspectorWindow
-          left={DIVIDER_WIDTH + this.state.hierarchyInspectorDividerLeft + 'vw'}
-          width={100 - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
-          inspected={this.state.inspected}
-          isAddComponentMenuOpen={this.state.isAddComponentMenuOpen}
-          searchQuery={this.state.searchQuery}
-          componentCreators={components}
-          existingComponentNames={
-            (
-            this.state.inspected
-            && this.state.inspected.isEntity
-            && Object.keys(this.state.inspected)
-              .filter(name => !['isEntity', 'isVirtual'].includes(name))
-            )
-            || []
-          }
-          selectedComponent={this.state.selectedComponent}
-          isDerived={this.state.isSelectedComponentDerived}
-
-          openAddComponentMenu={this.openAddComponentMenu}
-          editSystem={this.editSystem}
-          updateSearchQuery={this.updateSearchQuery}
-          selectComponentToAdd={this.selectComponentToAdd}
-          editCreator={this.editCreator}
-          toggleIsDerived={this.toggleIsSelectedComponentDerived}
-          addComponent={this.addComponent}
-        />
-      </div>
+      </Provider>
     );
   }
 
