@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Button from './Button';
+
 const VirtualSystemInspector = ({
   systemName,
 
@@ -9,12 +11,12 @@ const VirtualSystemInspector = ({
     <div className="Zap-SystemName">
       {systemName}
     </div>
-    <button
-      className="Zap-Button Zap-EditButton"
+    <Button
+      className="Zap-EditButton"
       onClick={() => editSystem(systemName)}
     >
       Edit system
-    </button>
+    </Button>
   </div>
 );
 

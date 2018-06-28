@@ -1,0 +1,17 @@
+.Zap-Button {
+  border-radius: 0.25vw;
+  padding: 0.5vw;
+  color: var(--text-color);
+  display: inline-block;
+  outline: none;
+  border: none;
+  font-size: 1em;
+}
+
+.Zap-AddButton {
+  background-color: var(--add-button-color);
+}
+
+.Zap-EditButton {
+  background-color: var(--edit-button-color);
+}

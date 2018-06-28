@@ -1,6 +1,8 @@
 import React from 'react';
 import './HierarchyWindow.css';
 
+import Button from './Button';
+
 const HierarchyWindow = ({
   left,
   width,
@@ -51,12 +53,12 @@ const HierarchyWindow = ({
           );
         })}
         <li>
-          <button
-            className="Zap-Button Zap-AddButton"
+          <Button
+            className="Zap-AddButton"
             onClick={addSystem}
           >
             Add system
-          </button>
+          </Button>
         </li>
       </ul>
     </div>

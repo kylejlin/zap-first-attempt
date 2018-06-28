@@ -2,6 +2,8 @@ import React from 'react';
 
 import sortBySimilarityToQuery from './sortBySimilarityToQuery';
 
+import Button from './Button';
+
 const VirtualEntityInspector = ({
   virtualEntity,
   isAddComponentMenuOpen,
@@ -53,12 +55,12 @@ const VirtualEntityInspector = ({
         </div>
       )
       : (
-        <button
-          className="Zap-Button Zap-AddButton"
+        <Button
+          className="Zap-AddButton"
           onClick={openAddComponentMenu}
         >
           Add component
-        </button>
+        </Button>
       )
     }
   </div>
