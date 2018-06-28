@@ -5,11 +5,15 @@ import * as components from './components';
 import VirtualSystem from './ecs/VirtualSystem';
 import VirtualEntity from './ecs/VirtualEntity';
 
+import AssetManager from './assetManager/AssetManager';
+import CustomComponentCreatorSource from './assetManager/CustomComponentCreatorSource';
+
 import getInitScene from './getInitScene';
 import getRenderSystem from './getRenderSystem';
 import compileSystem from './compileSystem';
 
 import newSystemInitialCode from './newSystemInitialCode';
+import newComponentCreatorInitialCode from './newComponentCreatorInitialCode';
 
 import CommandBar from './CommandBar';
 import InspectorWindow from './InspectorWindow';
@@ -39,6 +43,8 @@ class Zap extends React.Component {
 
       isAddComponentMenuOpen: false,
       searchQuery: '',
+
+      assetManager: new AssetManager(),
 
       canvasHierarchyDividerLeft: 50,
       hierarchyAssetsDividerTop: 75,
@@ -146,6 +152,11 @@ class Zap extends React.Component {
           left={DIVIDER_WIDTH + this.state.canvasHierarchyDividerLeft + 'vw'}
           width={this.state.hierarchyInspectorDividerLeft - this.state.canvasHierarchyDividerLeft - (2 * WINDOW_PADDING) + 'vw'}
           height={'calc(' + (100 - this.state.hierarchyAssetsDividerTop - DIVIDER_HEIGHT) + 'vh - ' + (2 * WINDOW_PADDING) + 'vw)'}
+          componentCreatorNames={Object.keys(this.state.assetManager.componentCreators)}
+          componentProviderNames={Object.keys(this.state.assetManager.componentProviders)}
+
+          addComponentCreator={this.addComponentCreatorToAssets}
+          addComponentProvider={this.addComponentProviderToAssets}
         />
 
         <div
@@ -168,7 +179,7 @@ class Zap extends React.Component {
           openAddComponentMenu={this.openAddComponentMenu}
           editSystem={this.editSystem}
           updateSearchQuery={this.updateSearchQuery}
-          addComponent={this.addComponent}
+          addComponent={this.addComponentToInspectedEntity}
         />
       </div>
     );
@@ -456,7 +467,7 @@ class Zap extends React.Component {
     });
   }
 
-  addComponent = (component) => {
+  addComponentToInspectedEntity = (component) => {
     const entity = this.state.inspected;
 
     if (!entity || !entity.isEntity) {
@@ -483,6 +494,16 @@ class Zap extends React.Component {
     );
     currentScene.entities.push(entity);
     this.forceUpdate();
+  }
+
+  addComponentCreatorToAssets = () => {
+    const creatorSource = new CustomComponentCreatorSource('MyAwesomeComponent', newComponentCreatorInitialCode);
+    this.state.assetManager.addComponentCreatorSource(creatorSource);
+    this.forceUpdate();
+  }
+
+  addComponentProviderToAssets = () => {
+    throw new Error('TODO addComponentProviderToAssets');
   }
 }
 

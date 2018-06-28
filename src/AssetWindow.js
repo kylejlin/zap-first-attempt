@@ -8,6 +8,11 @@ const AssetWindow = ({
   left,
   width,
   height,
+  componentCreatorNames,
+  componentProviderNames,
+
+  addComponentCreator,
+  addComponentProvider
 }) => (
   <div
     className="Zap-AssetWindow"
@@ -20,14 +25,17 @@ const AssetWindow = ({
   >
     <h2>Assets</h2>
     <div className="Zap-Components">
-      <h3>Components</h3>
+      <h3>Component creators</h3>
       <ul>
-        {/*TODO*/}
+        {componentCreatorNames.map((creatorName) => (
+          <li>{creatorName}</li>
+        ))}
         <li>
           <Button
             className="Zap-AddButton"
+            onClick={addComponentCreator}
           >
-            Add component
+            Add creator
           </Button>
         </li>
       </ul>
@@ -40,6 +48,7 @@ const AssetWindow = ({
         <li>
           <Button
             className="Zap-AddButton"
+            onClick={addComponentProvider}
           >
             Add provider
           </Button>
